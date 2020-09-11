@@ -1,4 +1,0 @@
-digraph Inorder {
-node [shape = record];
-rankdir = LR;
-50}
