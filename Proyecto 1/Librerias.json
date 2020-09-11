@@ -1,0 +1,69 @@
+
+{
+  "Libreria": [
+    {
+      "identificador": 1,
+      "nombre": "Sofa",
+      "letra": "S",
+      "color": "#FDB546",
+      "puntos": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 2,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "identificador": 2,
+      "nombre": "Television",
+      "letra": "T",
+      "color": "#E6E6E6",
+      "puntos": [
+        {
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "identificador": 3,
+      "nombre": "planta",
+      "letra": "F",
+      "color": "#50CB0A",
+      "puntos": [
+        {
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "identificador": 4,
+      "nombre": "mesa",
+      "letra": "M",
+      "color": "#0A18CB",
+      "puntos": [
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 1
+        },
+        {
+          "x": 0,
+          "y": 1
+        }
+      ]
+    }
+  ]
+}

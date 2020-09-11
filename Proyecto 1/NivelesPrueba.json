@@ -1,0 +1,175 @@
+{
+  "niveles": [
+    {
+      "nivel": 1,
+      "paredes": [
+        {
+          "inicio": [
+            0,
+            0
+          ],
+          "final": [
+            10,
+            0
+          ],
+          "color": "#F6FB34"
+        },
+        {
+          "inicio": [
+            0,
+            1
+          ],
+          "final": [
+            0,
+            8
+          ],
+          "color": "#F6FB34"
+        },
+        {
+          "inicio": [
+            1,
+            8
+          ],
+          "final": [
+            10,
+            8
+          ],
+          "color": "#F6FB34"
+        },
+        {
+          "inicio": [
+            10,
+            1
+          ],
+          "final": [
+            10,
+            7
+          ],
+          "color": "#F6FB34"
+        },
+        {
+          "inicio": [
+            1,
+            5
+          ],
+          "final": [
+            4,
+            5
+          ],
+          "color": "#F6FB34"
+        },
+        {
+          "inicio": [
+            5,
+            2
+          ],
+          "final": [
+            5,
+            7
+          ],
+          "color": "#F6FB34"
+        }
+      ],
+      "ventanas": [],
+      "objetos": [
+        {
+          "identificador": 1,
+          "nombre": "Sofa",
+          "letra": "S",
+          "color": "#FDB546",
+          "puntos": [
+            {
+              "x": 1,
+              "y": 2
+            },
+            {
+              "x": 2,
+              "y": 2
+            },
+            {
+              "x": 3,
+              "y": 2
+            }
+          ]
+        },
+        {
+          "identificador": 2,
+          "nombre": "Television",
+          "letra": "T",
+          "color": "#E6E6E6",
+          "puntos": [
+            {
+              "x": 2,
+              "y": 1
+            }
+          ]
+        },
+        {
+          "identificador": 3,
+          "nombre": "planta",
+          "letra": "F",
+          "color": "#50CB0A",
+          "puntos": [
+            {
+              "x": 1,
+              "y": 4
+            }
+          ]
+        },
+        {
+          "identificador": 4,
+          "nombre": "mesa",
+          "letra": "M",
+          "color": "#0A18CB",
+          "puntos": [
+            {
+              "x": 3,
+              "y": 4
+            },
+            {
+              "x": 4,
+              "y": 4
+            },
+            {
+              "x": 4,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "identificador": 5,
+          "nombre": "puerta",
+          "letra": "P",
+          "color": "#CB790A",
+          "puntos": [
+            {
+              "x": 5,
+              "y": 1
+            }
+          ]
+        },
+        {
+          "identificador": 6,
+          "nombre": "escalera",
+          "letra": "ES",
+          "color": "#02703A",
+          "puntos": [
+            {
+              "x": 7,
+              "y": 7
+            },
+            {
+              "x": 8,
+              "y": 7
+            },
+            {
+              "x": 9,
+              "y": 7
+            }
+          ]
+        }
+      ]
+    },
+    {}
+  ]
+}
