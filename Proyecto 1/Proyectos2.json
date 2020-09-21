@@ -1,7 +1,7 @@
 {
   "proyectos": [
     {
-      "nombre": "Proyecto1",
+      "nombre": "Proyecto2",
       "niveles": [
         {
           "nivel": 1,
@@ -82,15 +82,15 @@
               "color": "#FDB546",
               "puntos": [
                 {
-                  "x": 0,
-                  "y": 2
-                },
-                {
                   "x": 1,
                   "y": 2
                 },
                 {
                   "x": 2,
+                  "y": 2
+                },
+                {
+                  "x": 3,
                   "y": 2
                 }
               ]

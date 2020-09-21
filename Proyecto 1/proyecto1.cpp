@@ -6,10 +6,6 @@
 using namespace std;
 using json = nlohmann::json;
 
-//json jfile;//declaro un objeto de tipo json
-
-int *dobleX, *dobleY;//vectores para coordenadas x y y de fichas dobles
-
 class nodoListaObjetos{
 public:
     int x;
@@ -29,7 +25,7 @@ public:
     nodoListaObjetos *ultimo;
     int tam = 0;//tamaño
 
-    listaSimple()
+    listaObjetos()
     {
         primero = NULL;
         ultimo = NULL;
@@ -62,6 +58,7 @@ public:
             temp = temp->siguiente;
         }
     }
+
 };
 
 class nodoMatriz
@@ -96,13 +93,21 @@ class matrix
 {
 
 public:
+    //string headers_X;
     nodoMatriz *head;
-    string headers_X;
+    //int level;
+    int level = 0;
 
     matrix()
     {
-        nodoMatriz *temp = new nodoMatriz("", "", 0, 0);
+        //nodoMatriz *temp = new nodoMatriz("", "", 0, 0);
+        nodoMatriz *temp = new nodoMatriz("", "", -1, -1);
         head = temp;
+    }
+
+    matrix(const matrix &otro){
+        //nodoMatriz *temp = new nodoMatriz("", "", -1, -1);
+        //head = otro->head;
     }
 
     void add(int x, int y, string letra, string color)
@@ -120,7 +125,8 @@ public:
     {
         if (head->right == NULL)
         {
-            nodoMatriz *temp = new nodoMatriz("","", x, 0);
+            //nodoMatriz *temp = new nodoMatriz("","", x, 0);
+            nodoMatriz *temp = new nodoMatriz("","", x, -1);
             head->right = temp;
             temp->left = head;
         }
@@ -133,13 +139,15 @@ public:
             }
             if (temp->right == NULL)
             {
-                nodoMatriz *new_temp = new nodoMatriz("", "", x, 0);
+                //nodoMatriz *new_temp = new nodoMatriz("", "", x, 0);
+                nodoMatriz *new_temp = new nodoMatriz("", "", x, -1);
                 temp->right = new_temp;
                 new_temp->left = temp;
             }
             else if(temp->right != NULL && temp->right->xc != x)
             {
-                nodoMatriz *new_temp = new nodoMatriz("", "", x, 0);
+                //nodoMatriz *new_temp = new nodoMatriz("", "", x, 0);
+                nodoMatriz *new_temp = new nodoMatriz("", "", x, -1);
                 nodoMatriz *der = temp->right;
                 temp->right = new_temp;
                 new_temp->left = temp;
@@ -153,7 +161,8 @@ public:
     {
         if (head->down == NULL)
         {
-            nodoMatriz *temp = new nodoMatriz("", "", 0, y);
+            //nodoMatriz *temp = new nodoMatriz("", "", 0, y);
+            nodoMatriz *temp = new nodoMatriz("", "", -1, y);
             head->down = temp;
             temp->up = head;
         }
@@ -166,13 +175,15 @@ public:
             }
             if (temp->down == NULL)
             {
-                nodoMatriz *new_temp = new nodoMatriz("", "", 0, y);
+                //nodoMatriz *new_temp = new nodoMatriz("", "", 0, y);
+                nodoMatriz *new_temp = new nodoMatriz("", "", -1, y);
                 temp->down = new_temp;
                 new_temp->up = temp;
             }
             else if(temp->down != NULL && temp->down->yc != y)
             {
-                nodoMatriz *new_temp = new nodoMatriz("", "", 0, y);
+                //nodoMatriz *new_temp = new nodoMatriz("", "", 0, y);
+                nodoMatriz *new_temp = new nodoMatriz("", "", -1, y);
                 nodoMatriz *der = temp->down;
                 temp->down = new_temp;
                 new_temp->up = temp;
@@ -407,8 +418,14 @@ public:
 
     void reporteMatriz()
     {
-
-        ofstream f("matrix.txt");
+        string nivelMatriz;
+        if(level == 0){
+            nivelMatriz = "matrix.txt";
+        }else{
+            nivelMatriz = "matrix"+to_string(level)+".txt";
+        }
+        //ofstream f("matrix.txt");
+        ofstream f(nivelMatriz);
         if(f.is_open())
         {
             f<<"digraph G {" << endl;
@@ -421,7 +438,13 @@ public:
 
             //generar cabeceras en x
             nodoMatriz *temp = head;
-            f<<"nodeX_"<<temp->xc<<" [label=\"     Nivel X     \"];" <<endl;
+            //f<<"nodeX_"<<temp->xc<<" [label=\"     Nivel X     \"];" <<endl;
+            if(level == 0){
+                f<<"\"nodeX_"<<temp->xc<<"\" [label=\"     Nivel X     \"];" <<endl;
+            }else{
+                f<<"\"nodeX_"<<temp->xc<<"\" [label=\"     Nivel "<<level<<"     \"];" <<endl;
+            }
+
             if(temp->right != NULL){
                 temp = temp->right;
                 while(temp->right != NULL)
@@ -472,6 +495,8 @@ public:
             f<<"{rank=same;";
             if(temp->right != NULL)
             {
+                f<<" \"nodeX"<<"_"<<temp->xc<<"\"";//para imprimir el nodo raiz de la matriz
+                temp = temp->right;
                 while(temp != NULL)
                 {
                     f<<" nodeX"<<"_"<<temp->xc;
@@ -507,7 +532,7 @@ public:
             {
                 while(temp->right != NULL) //i put temp->right because I'll print actual node and next node
                 {
-                    f<<"nodeX_"<<temp->xc<<" -> nodeX_"<<temp->right->xc<<" [dir=both];"<<endl;
+                    f<<"\"nodeX_"<<temp->xc<<"\" -> nodeX_"<<temp->right->xc<<" [dir=both];"<<endl;
                     temp = temp->right;
                 }
             }
@@ -516,7 +541,7 @@ public:
             temp = head;
             if(temp->down != NULL)
             {
-                f<<"nodeX_"<<temp->xc<<" -> nodeY_"<<temp->down->yc<<" [dir=both];"<<endl;
+                f<<"\"nodeX_"<<temp->xc<<"\" -> nodeY_"<<temp->down->yc<<" [dir=both];"<<endl;
                 temp = temp->down;
                 while(temp->down != NULL)
                 {
@@ -573,9 +598,13 @@ public:
         }
         else cerr << "Error de apertura del archivo." << endl;
 
-        system("dot -Tpng matrix.txt -o matrix.png");
+        string imprimir = "dot -Tpng "+nivelMatriz+" -o matrix"+to_string(level)+".png";
+        //system("dot -Tpng matrix.txt -o matrix.png");
+        system(imprimir.c_str());//.c_str() es para que me reconozca la cadena con numeros como cadena normal
         cout<<"\n";
-        system("matrix.png");
+        string abrir = "matrix"+to_string(level)+".png";
+        //system("matrix.png");
+        system(abrir.c_str());
     }
 
     void del(int x, int y)
@@ -669,12 +698,12 @@ public:
                 }
                 else
                 {
-                    cout<<"node not found"<<endl;
+                    cout<<"node not found 1"<<endl;
                 }
             }
             else
             {
-                cout<<"node not found"<<endl;
+                cout<<"node not found 2"<<endl;
             }
         }
     }
@@ -700,20 +729,23 @@ public:
                 }//verify if row exist
                 if(temp->yc == y)
                 {
-                    cout<<"Si existe"<<endl;
+                    //cout<<"Si existe"<<endl;
                     return 'S';
                 }
                 else
                 {
-                    cout<<"No existe"<<endl;
+                    //cout<<"No existe"<<endl;
                     return 'N';
                 }
             }
             else
             {
-                cout<<"No existe"<<endl;
+                //cout<<"No existe"<<endl;
                 return 'N';
             }
+        }else{
+            //cout<<"No existeA"<<endl;
+            return 'N';
         }
     }
 };
@@ -750,37 +782,69 @@ public:
 
     void add(nodoBST *temp, listaObjetos *insertar){
         if(root == NULL){
+            temp->lista = insertar;
             root = temp;
-            //root->primero = insertar->primero;
-            root->lista = insertar;
-            cout<<"Se ingreso correctamente "<<endl;
+            //cout<<"Se ingreso correctamente "<<endl;
         }else{
-            recursive_add(root, temp, insertar);
+            temp->lista = insertar;
+            recursive_add(root, temp);
         }
     }
 
-    void recursive_add(nodoBST *current, nodoBST *temp, listaObjetos *insertar){
+    void recursive_add(nodoBST *current, nodoBST *temp){
         if(temp->id < current->id){//INSERT in left sub-tree
             if(current->left != NULL){//IS NOT NULL, make recursive call
-                recursive_add(current->left, temp, insertar);
+                recursive_add(current->left, temp);
             }else{//IS NULL, INSERT NODE
                 current->left = temp;
-                //current->left->primero = insertar->primero;
-                current->left->lista = insertar;
-                cout<<"Se ingreso correctamente "<<endl;
+                //cout<<"Se ingreso correctamente "<<endl;
             }
         }else if(temp->id > current->id){//INSERT in right sub-tree
             if(current->right != NULL){//IS NOT NULL, make recursive call
-                recursive_add(current->right, temp, insertar);
+                recursive_add(current->right, temp);
             }else{//IS NULL, INSERT NODE
                 current->right = temp;
-                //current->left->primero = insertar->primero;
-                current->left->lista = insertar;
-                cout<<"Se ingreso correctamente "<<endl;
+                //cout<<"Se ingreso correctamente "<<endl;
             }
         }else{
             //ERROR el nodo ya existe
-            cout<<"El nombre ya existe"<<endl;
+            cout<<"El objeto "<<temp->nombre<<" ya existe. No se inserto"<<endl;
+        }
+    }
+
+    char add2(nodoBST *temp, listaObjetos *insertar){
+        if(root == NULL){
+            temp->lista = insertar;
+            root = temp;
+            //cout<<"Se ingreso correctamente "<<endl;
+            return 'S';
+        }else{
+            temp->lista = insertar;
+            return recursive_add2(root, temp);
+        }
+    }
+
+    char recursive_add2(nodoBST *current, nodoBST *temp){
+        if(temp->id < current->id){//INSERT in left sub-tree
+            if(current->left != NULL){//IS NOT NULL, make recursive call
+                recursive_add2(current->left, temp);
+            }else{//IS NULL, INSERT NODE
+                current->left = temp;
+                return 'S';
+                //cout<<"Se ingreso correctamente "<<endl;
+            }
+        }else if(temp->id > current->id){//INSERT in right sub-tree
+            if(current->right != NULL){//IS NOT NULL, make recursive call
+                recursive_add2(current->right, temp);
+            }else{//IS NULL, INSERT NODE
+                current->right = temp;
+                //cout<<"Se ingreso correctamente "<<endl;
+                return 'S';
+            }
+        }else{
+            //ERROR el nodo ya existe
+            cout<<"El objeto "<<temp->nombre<<" ya existe. No se inserto"<<endl;
+            return 'N';
         }
     }
 
@@ -800,6 +864,18 @@ public:
         //llamar recursivamente al sub-arbol derecho
         if(current->right != NULL){
             recursive_inorder(current->right);
+        }
+    }
+
+    void inorderObjetos(){
+        recursive_inorderObjetos(root);
+    }
+
+    void recursive_inorderObjetos(nodoBST *current){
+        if(current != NULL){
+            recursive_inorderObjetos(current->left);
+            cout<<current->id<<",  "<<current->nombre<<endl;
+            recursive_inorderObjetos(current->right);
         }
     }
 
@@ -1153,66 +1229,59 @@ public:
         }
     }
 
-    //Retornar la lista del nodo para mostrarla
+    //RETORNA EL NODO BUSCADO (CON SU LISTA)
     nodoBST *actualNodo(int id){
-        nodoBST *temp = new nodoBST(id, "","","");
         if(root == NULL)
         {
-            cout<<"el usuario no existe"<<endl;
-            //existe = false;
-            //return false;
+            cout<<"el objeto no existe"<<endl;
+            return NULL;
         }
         else
         {
-            return recursiveActualNodo(root, temp);
+            return recursiveActualNodo(root, id);
         }
     }
 
     //RETORNA EL NODO BUSCADO (CON SU LISTA)
-    nodoBST *recursiveActualNodo(nodoBST *current, nodoBST *temp)
+    nodoBST *recursiveActualNodo(nodoBST *current, int id)
     {
-        if(temp->id < current->id)
+        if(id < current->id)
         {
             if(current->left != NULL)
             {
-                recursiveActual(current->left, temp);
+                recursiveActualNodo(current->left, id);
             }
             else
             {
-                cout<<"el usuario no existe"<<endl;
-                //existe = false;//No existe
-                //return false;
+                cout<<"el objeto no existe"<<endl;
+                return NULL;
             }
         }
-        else if(temp->id > current->id)
+        else if(id > current->id)
         {
             if(current->right != NULL)
             {
-                recursiveActual(current->right, temp);
+                recursiveActualNodo(current->right, id);
             }
             else
             {
-                cout<<"el usuario no existe"<<endl;
-                //existe = false;//No existe
-                //return false;
+                cout<<"el objeto no existe"<<endl;
+                return NULL;
             }
         }
         else
         {
-            //existe = true;//Existe
+            //Existe
             return current;
         }
     }
 
-
     //Retornar la lista del nodo para mostrarla
-    listaObjetos *actual(int id){
+    listaObjetos *ListaActual(int id){
         nodoBST *temp = new nodoBST(id, "","","");
         if(root == NULL)
         {
-            cout<<"el usuario no existe"<<endl;
-            //existe = false;
-            //return false;
+            cout<<"el objeto no existe"<<endl;
         }
         else
         {
@@ -1230,9 +1299,7 @@ public:
             }
             else
             {
-                cout<<"el usuario no existe"<<endl;
-                //existe = false;//No existe
-                //return false;
+                cout<<"el objeto no existe"<<endl;
             }
         }
         else if(temp->id > current->id)
@@ -1243,30 +1310,190 @@ public:
             }
             else
             {
-                cout<<"el usuario no existe"<<endl;
-                //existe = false;//No existe
-                //return false;
+                cout<<"el el objeto no existe"<<endl;
             }
         }
         else
         {
-            //existe = true;//Existe
             return current->lista;
+        }
+    }
+
+    //Mostrar la lista de cada nodo del arbol (en orden)
+    void mostrarArbolLista(){
+        recursiveMostrarArbolLista(root);
+    }
+
+    void recursiveMostrarArbolLista(nodoBST *actual){
+        if(actual != NULL){
+            recursiveMostrarArbolLista(actual->left);
+            cout<<actual->id<<", "<<actual->nombre<<", "<<actual->letra<<", "<<actual->color<<endl;
+            cout<<"Lista de puntos: "<<endl;
+            actual->lista->mostrar();
+            cout<<""<<endl;
+
+            recursiveMostrarArbolLista(actual->right);
+        }
+    }
+};
+
+class nodoListaNiveles{
+public:
+    int numNivel;
+    nodoListaNiveles *siguiente;
+    matrix *nivel;
+    BST *objetos;
+
+    nodoListaNiveles(int x){
+        this->numNivel = x;
+        nivel = NULL;
+        objetos = NULL;
+        siguiente = NULL;
+    }
+};
+
+class listaNiveles{
+public:
+    nodoListaNiveles *primero;
+    nodoListaNiveles *ultimo;
+    int tam = 0;//tamaño
+
+    listaNiveles(){
+        primero = NULL;
+        ultimo = NULL;
+    }
+
+    int magnitud(){
+        return tam;
+    }
+
+    void insertar(int x, matrix *matriz, BST *abb){
+        nodoListaNiveles *nuevo = new nodoListaNiveles(x);
+        matriz->level = x;//ingresa el nivel en que estara la matriz
+        nuevo->nivel = matriz;//inserta la matriz
+        nuevo->objetos = abb;//inserta el arbol de objetos
+
+        if(primero == NULL)
+        {
+            primero = nuevo;
+            ultimo = nuevo;
+            tam++;
+            //cout<<"inserto"<<endl;
+        }
+        else
+        {
+            nodoListaNiveles *temp = primero;
+            while (temp->siguiente != NULL && temp->siguiente->numNivel < x){
+                temp = temp->siguiente;
+            }
+            if(temp->siguiente == NULL){
+                temp->siguiente = nuevo;
+                ultimo = nuevo;
+                tam++;
+            }else if(temp->siguiente != NULL && temp->numNivel != x){
+                if(temp != primero){
+                    nuevo->siguiente = temp->siguiente;
+                    temp->siguiente = nuevo;
+                }else{
+                    nuevo->siguiente = temp;
+                    primero = nuevo;
+                }
+                tam++;
+            }else{
+                cout<<"El nivel ya existe"<<endl;
+            }
+        }
+    }
+
+    void mostrar(){
+        nodoListaNiveles *temp = primero;
+        while (temp != NULL){
+            cout<<"Nivel: "<<temp->numNivel<<endl;
+            temp = temp->siguiente;
+        }
+    }
+
+    void mostrarProyecto(){
+        nodoListaNiveles *temp = primero;
+        while (temp != NULL){
+            //cout<<"Nivel: "<<temp->numNivel<<endl;
+            temp->nivel->reporteMatriz();
+            temp = temp->siguiente;
+        }
+    }
+
+    void eliminarNivel(int nivel){
+        if(primero != NULL){
+            nodoListaNiveles *temp = primero;
+            if(temp->numNivel != nivel){
+                while (temp->siguiente != NULL && temp->siguiente->numNivel != nivel){
+                    temp = temp->siguiente;
+                }
+                if(temp->siguiente != NULL && temp->siguiente->numNivel == nivel){
+                    nodoListaNiveles *aux = temp->siguiente;//el que voy a eliminar
+                    if(aux->siguiente != NULL){
+                        temp->siguiente = aux->siguiente;//si el nivel esta entre la cabeza y el ultimo
+                        aux->siguiente = NULL;
+                        cout<<"Nivel eliminado"<<endl;
+                    }else{
+                        temp->siguiente = NULL;//si es el ultimo nivel
+                        cout<<"Nivel eliminado"<<endl;
+                    }
+                }else{
+                    cout<<"nivel no existe"<<endl;
+                }
+            }else{
+                //nodoListaNiveles *aux = temp;//el que voy a eliminar
+                primero = temp->siguiente;
+                temp = NULL;
+                cout<<"Nivel eliminado"<<endl;
+            }
+        }else{
+            cout<<"el nivel no existe"<<endl;
+        }
+    }
+
+    //Retorna la matriz del nivel
+    matrix *matrizVer(int nivel){
+        nodoListaNiveles *temp = primero;
+        while (temp->numNivel != nivel && temp->siguiente != NULL){
+            temp = temp->siguiente;
+        }
+        if(temp->numNivel == nivel){
+            return temp->nivel;
+        }else{
+            //cout<<"No existe el nivel"<<endl;
+            return NULL;
+        }
+    }
+
+    //retorna el arbol del nivel
+    BST *abbVer(int nivel){
+        nodoListaNiveles *temp = primero;
+        while (temp->numNivel != nivel && temp->siguiente != NULL){
+            temp = temp->siguiente;
+        }
+        if(temp->numNivel == nivel){
+            return temp->objetos;
+        }else{
+            cout<<"No existe el nivel"<<endl;
         }
     }
 };
 
 class nodoAVL{
 public:
-    nodoAVL *left;
-    nodoAVL *right;
-    string key;
-    int fe;
+    string key;//nombre del proyecto
+    int fe;//factor de quilibrio del nodo
+    nodoAVL *left;//hijo izquierdo
+    nodoAVL *right;//hijo derecho
+    listaNiveles *listaN;//lista de niveles (matriz y abb de objetos)
 
     nodoAVL(string key){
         this->key = key;
-        left = right  = NULL;
         this->fe = 0;
+        left = right  = NULL;
+        listaN = NULL;
     }
 };
 
@@ -1377,8 +1604,10 @@ public:
     }
 
     //Metodo insertar inicial
-    void insertar(string d){
+    //void insertar(string d){
+    void insertar(string d, listaNiveles *nivelesProyecto){
         nodoAVL *nuevo = new nodoAVL(d);
+        nuevo->listaN = nivelesProyecto;
         if(root == NULL){
             root = nuevo;
         }else{
@@ -1610,92 +1839,630 @@ public:
         }
     }
 
-void inOrden(){
-    recursiveInOrden(root);
+    void inOrden(){
+        if(root != NULL){
+            recursiveInOrden(root);
+        }else{
+            cout<<"Aun no se han agregado proyectos"<<endl;
+        }
+
+    }
+
+    void recursiveInOrden(nodoAVL *actual){
+        if(actual != NULL){
+            recursiveInOrden(actual->left);
+            cout<<actual->key<<endl;
+            recursiveInOrden(actual->right);
+        }
+    }
+
+    nodoAVL *proyecto(string nombre){
+        if(root != NULL){
+            return proyectoRecursivo(nombre, root);
+        }else{
+            //cout<<"Aun no se agregan proyectos"<<endl;
+            return NULL;
+        }
+
+    }
+
+    nodoAVL *proyectoRecursivo(string nombre, nodoAVL *actual){
+        if(nombre < actual->key){
+            if(actual->left != NULL){
+                proyectoRecursivo(nombre, actual->left);
+            }else{
+                //cout<<"no existe"<<endl;
+                return NULL;
+            }
+        }else if(nombre > actual->key){
+            if(actual->right != NULL){
+                proyectoRecursivo(nombre, actual->right);
+            }else{
+                //cout<<"no existe"<<endl;
+                return NULL;
+            }
+        }else{/*## RETORNAR EL NODO ENCONTRADO##*/
+            //cout<<"el nodo encontrado es: "<<actual->key<<endl;
+            return actual;
+        }
+    }
+};
+
+class nodoListaAscendete{
+/*public:
+    nodoListaAscendete *siguiente;
+    string proyecto;
+    int noNiveles;
+
+    nodoListaAscendete(string nombre, int niveles){
+        this->proyecto = nombre;
+        this->noNiveles = niveles;
+        siguiente = NULL;
+    }*/
+};
+
+class listaAscendente{
+/*public:
+    nodoListaObjetos *primero;
+    nodoListaObjetos *ultimo;
+    int tam = 0;//tamaño
+
+    listaAscendente()
+    {
+        primero = NULL;
+        ultimo = NULL;
+    }
+
+    int magnitud(){
+        return tam;
+    }
+
+    void insertar(string nombre, int niveles){
+        nodoListaAscendete *temp = new nodoListaAscendete(nombre, niveles);
+        if(primero == NULL)
+        {
+            primero = temp;
+            ultimo = temp;
+            tam++;
+        }
+        else
+        {
+           nodoListaAscendete() *temp = primero;
+            while (temp->siguiente != NULL && temp->siguiente->noNiveles < niveles){
+                temp = temp->siguiente;
+            }
+            if(temp->siguiente == NULL){
+                temp->siguiente = nuevo;
+                ultimo = nuevo;
+                tam++;
+            }else if(temp->siguiente != NULL && temp->numNivel != x){
+                if(temp != primero){
+                    nuevo->siguiente = temp->siguiente;
+                    temp->siguiente = nuevo;
+                }else{
+                    nuevo->siguiente = temp;
+                    primero = nuevo;
+                }
+                tam++;
+            }else{
+                cout<<"El nivel ya existe"<<endl;
+            }
+        }
+    }
+
+    void mostrar(){
+        nodoListaObjetos *temp = primero;
+        while (temp != NULL){
+            cout<<temp->x<<", "<<temp->y<<endl;
+            temp = temp->siguiente;
+        }
+    }*/
+};
+
+
+void leerJsonLibrerias(BST *global, string archivo){
+    string fName = archivo;
+    json jfile;//declaro un objeto de tipo json
+    ifstream doc(fName);//modificar para recibir la ruta del archivo
+    //if(-doc.is_open()) std::cout<<"ERROR: No se pudo abrir el archivo"<<endl;
+    if(!doc.is_open()){
+        cout<<"ERROR: No se pudo abrir el archivo. Verifique la ruta o que el archivo exista"<<endl;
+    }else{
+        doc>>jfile;//paso el contenido al reader.
+        //CARGO LOS OBJETOS INICIALES
+        //leo la lista libreria
+        json objetos = jfile["Libreria"];
+        int dcant = objetos.size();
+        for(int i = 0; i < dcant; i++){
+            json objeto = objetos[i];
+            //creo el nodo del arbol
+            int jIdentificador = objeto["identificador"];
+            string jNombre = objeto["nombre"];
+            string jLetra = objeto["letra"];
+            string jColor = objeto["color"];
+            nodoBST *nuevoObjeto = new nodoBST(jIdentificador, jNombre, jLetra, jColor);
+            //cout<<nuevoObjeto->id<<", "<<nuevoObjeto->nombre<<", "<<nuevoObjeto->letra<<", "<<nuevoObjeto->color<<endl;
+            //creo la lista del arbol
+            json coordenadas = objeto["puntos"];
+            int cant = coordenadas.size();
+            listaObjetos *nuevaLista = new listaObjetos();
+            for(int j = 0; j < cant; j++){
+                json valores = coordenadas[j];
+                int x = valores["x"];
+                int y = valores["y"];
+                nuevaLista->insertar(x, y);
+            }
+            //inserto el objeto al arbol
+            global->add(nuevoObjeto, nuevaLista);
+            //nuevaLista->mostrar();
+        }
+        cout<<"el archivo fue leido exitosamente"<<endl;
+    }
+    //global->mostrarArbolLista();
 }
 
-void recursiveInOrden(nodoAVL *actual){
-    if(actual != NULL){
-        recursiveInOrden(actual->left);
-        cout<<actual->key<<endl;
-        recursiveInOrden(actual->right);
+void leerNivel(string archivo, listaNiveles *listaNivel, BST* general){
+    //crear matriz
+    matrix *nuevaMatriz = new matrix;
+    //crear arbol ABB
+    BST *nuevoArbol = new BST;
+
+    string fName = archivo;
+    json jfile;//declaro un objeto de tipo json
+    ifstream doc(fName);//modificar para recibir la ruta del archivo
+
+    //if(-doc.is_open()) std::cout<<"ERROR: No se pudo abrir el archivo"<<endl;
+    if(!doc.is_open()){
+        cout<<"ERROR: No se pudo abrir el archivo. Verifique la ruta o que el archivo exista"<<endl;
+    }else{
+        doc>>jfile;//paso el contenido al reader.
+        //CARGO LOS OBJETOS INICIALES
+        //leo la lista libreria
+        json niveles = jfile["niveles"];
+        json nuevoNivel = niveles[0];
+        int nivel = nuevoNivel["nivel"];
+        //cout<<"nivel leido: "<<nivel<<endl;
+        //leo la sublista de nuevo nivel puesto que hay mas atributos
+        //si dentro de la lista solo hubieran listas podría acceder a ellas directamente
+
+        //##########INSERTAR PAREDES##########
+        json paredes = nuevoNivel["paredes"];
+        int cant = paredes.size();
+        for(int i = 0; i < cant; i++){
+            json pared = paredes[i];
+            json inicio = pared["inicio"];
+            int xi = inicio[0];//xinicial
+            int yi = inicio[1];//yinicial
+            json fin = pared["final"];
+            int xf = fin[0];//xfinal
+            int yf = fin[1];//yfinal
+            string color = pared["color"];
+            if((xf - xi) != 0){
+                for(int x = xi; x <= xf; x++){
+                    char existeCasilla;
+                    existeCasilla = nuevaMatriz->verificarCasilla(x, yi);
+                    if(existeCasilla == 'N'){
+                        nuevaMatriz->add(x, yi, "p", color);
+                    }
+                }
+            }else if((yf - yi) != 0){
+                for(int y = yi; y <= yf; y++){
+                    if(nuevaMatriz->verificarCasilla(xi, y) == 'N'){
+                        nuevaMatriz->add(xi, y, "p", color);
+                    }
+                }
+            }else{
+                if(nuevaMatriz->verificarCasilla(xi, yi) == 'N'){
+                        nuevaMatriz->add(xi, yi, "p", color);
+                }
+            }
+        }
+
+        //##########INSERTAR VENTANAS##########
+        json ventanas = nuevoNivel["ventanas"];
+        int cantv = ventanas.size();
+        for(int i = 0; i < cantv; i++){
+            json ventana = ventanas[i];
+            json inicio = ventana["inicio"];
+            int xi = inicio[0];//xinicial
+            int yi = inicio[1];//yinicial
+            json fin = ventana["final"];
+            int xf = fin[0];//xfinal
+            int yf = fin[1];//yfinal
+            string color = ventana["color"];
+            if((xf - xi) != 0){
+                for(int x = xi; x <= xf; x++){
+                    char existeCasilla;
+                    existeCasilla = nuevaMatriz->verificarCasilla(x, yi);
+                    if(existeCasilla == 'N'){
+                        nuevaMatriz->add(x, yi, "v", color);
+                    }
+                }
+            }else if((yf - yi) != 0){
+                for(int y = yi; y <= yf; y++){
+                    if(nuevaMatriz->verificarCasilla(xi, y) == 'N'){
+                        nuevaMatriz->add(xi, y, "v", color);
+                    }
+                }
+            }else{
+                if(nuevaMatriz->verificarCasilla(xi, yi) == 'N'){
+                        nuevaMatriz->add(xi, yi, "v", color);
+                }
+            }
+        }
+        //nuevaMatriz->reporteMatriz();
+        //##########INSERTAR objetos##########
+        json objetos = nuevoNivel["objetos"];
+        int dcant = objetos.size();
+        //BST *nuevoArbol = new BST;
+        for(int i = 0; i < dcant; i++){
+            json objeto = objetos[i];
+            //creo el nodo del arbol
+            int jIdentificador = objeto["identificador"];
+            string jNombre = objeto["nombre"];
+            string jLetra = objeto["letra"];
+            string jColor = objeto["color"];
+            //nodoBST *nuevoObjeto = new nodoBST(jIdentificador, jNombre, jLetra, jColor);
+            //cout<<nuevoObjeto->id<<", "<<nuevoObjeto->nombre<<", "<<nuevoObjeto->letra<<", "<<nuevoObjeto->color<<endl;
+
+            json coordenadas = objeto["puntos"];
+            int cant = coordenadas.size();
+            //creo la lista del nodo del arbol
+            listaObjetos *nuevoObjeto = new listaObjetos();
+            //creo la lista del nodo del arbol general
+            listaObjetos *nuevoObjetoOrigen = new listaObjetos();
+            json valorInicial = coordenadas[0];
+            int a = valorInicial["x"];
+            int b = valorInicial["y"];
+
+            for(int j = 0; j < cant; j++){
+                json valores = coordenadas[j];
+                int x = valores["x"];
+                int y = valores["y"];
+                int cx = x - a;
+                int cy = y - b;
+                nuevoObjeto->insertar(x, y);
+                nuevoObjetoOrigen->insertar(cx, cy);
+            }
+            /*cout<<"objeto en nivel"<<endl;
+            nuevoObjeto->mostrar();
+            cout<<"\n objeto en general"<<endl;
+            nuevoObjetoOrigen->mostrar();*/
+
+            //verifico que se pueda insertar en la matriz
+            bool insertar = true;
+            nodoListaObjetos *temp = nuevoObjeto->primero;
+            while (insertar == true && temp != NULL){
+                char verificar = nuevaMatriz->verificarCasilla(temp->x, temp->y);
+                if(verificar != 'N'){
+                    insertar = false;
+                    //DECIR QUE OBJETO NO SE PUDO INSERTAR
+                    cout<<"el objeto "<<jNombre<<" no puede insertarse en esta posicion"<<endl;
+                }
+                temp = temp->siguiente;
+            }
+
+            //inserto el objeto al arbol y a la matriz
+            if(insertar){
+                nuevoArbol->add(new nodoBST(jIdentificador, jNombre, jLetra, jColor), nuevoObjeto);
+                general->add(new nodoBST(jIdentificador, jNombre, jLetra, jColor), nuevoObjetoOrigen);
+                nodoListaObjetos *ingresar = nuevoObjeto->primero;
+                while(ingresar != NULL){
+                    nuevaMatriz->add(ingresar->x, ingresar->y, jLetra, jColor);
+                    ingresar = ingresar->siguiente;
+                }
+            }
+            //listaNivel->insertar(nivel, nuevaMatriz, nuevoArbol);
+            //nuevaLista->mostrar();
+        }
+        listaNivel->insertar(nivel, nuevaMatriz, nuevoArbol);
+        cout<<"el archivo fue leido exitosamente"<<endl;
     }
 }
-};
+
+void leerProyecto(string archivo, AVL *principal, BST *general){
+
+    string fName = archivo;
+    json jfile;//declaro un objeto de tipo json
+    ifstream doc(fName);//modificar para recibir la ruta del archivo
+
+    //if(-doc.is_open()) std::cout<<"ERROR: No se pudo abrir el archivo"<<endl;
+    if(!doc.is_open()){
+        cout<<"ERROR: No se pudo abrir el archivo. Verifique la ruta o que el archivo exista"<<endl;
+    }else{
+        doc>>jfile;//paso el contenido al reader.
+        //leo el proyecto
+        json proyectos = jfile["proyectos"];
+        int pcant = proyectos.size();
+        for(int p = 0; p < pcant; p++){
+            //crear la lista de niveles del proyecto
+            listaNiveles *nuevaListaNiveles = new listaNiveles;
+            //crear matriz
+            matrix *nuevaMatriz = new matrix;
+            //crear arbol ABB
+            BST *nuevoArbol = new BST;
+
+            json nuevoProyecto = proyectos[p];
+            //nombre del proyecto
+            string nombre = nuevoProyecto["nombre"];
+            //cargo los niveles
+            json niveles = nuevoProyecto["niveles"];
+            int nivcant = niveles.size();
+            for(int n = 0; n < nivcant-1; n++){
+                json nuevoNivel = niveles[n];
+                int nivel = nuevoNivel["nivel"];
+                //cout<<"nivel leido: "<<nivel<<endl;
+                //##########INSERTAR PAREDES##########
+                json paredes = nuevoNivel["paredes"];
+                int cant = paredes.size();
+                for(int i = 0; i < cant; i++){
+                    json pared = paredes[i];
+                    json inicio = pared["inicio"];
+                    int xi = inicio[0];//xinicial
+                    int yi = inicio[1];//yinicial
+                    json fin = pared["final"];
+                    int xf = fin[0];//xfinal
+                    int yf = fin[1];//yfinal
+                    string color = pared["color"];
+                    if((xf - xi) != 0){
+                        for(int x = xi; x <= xf; x++){
+                            char existeCasilla;
+                            existeCasilla = nuevaMatriz->verificarCasilla(x, yi);
+                            if(existeCasilla == 'N'){
+                                nuevaMatriz->add(x, yi, "p", color);
+                            }
+                        }
+                    }else if((yf - yi) != 0){
+                        for(int y = yi; y <= yf; y++){
+                            if(nuevaMatriz->verificarCasilla(xi, y) == 'N'){
+                                nuevaMatriz->add(xi, y, "p", color);
+                            }
+                        }
+                    }else{
+                        if(nuevaMatriz->verificarCasilla(xi, yi) == 'N'){
+                                nuevaMatriz->add(xi, yi, "p", color);
+                        }
+                    }
+                }//fin insertar paredes
+                //##########INSERTAR VENTANAS##########
+                json ventanas = nuevoNivel["ventanas"];
+                int cantv = ventanas.size();
+                for(int i = 0; i < cantv; i++){
+                    json ventana = ventanas[i];
+                    json inicio = ventana["inicio"];
+                    int xi = inicio[0];//xinicial
+                    int yi = inicio[1];//yinicial
+                    json fin = ventana["final"];
+                    int xf = fin[0];//xfinal
+                    int yf = fin[1];//yfinal
+                    string color = ventana["color"];
+                    if((xf - xi) != 0){
+                        for(int x = xi; x <= xf; x++){
+                            char existeCasilla;
+                            existeCasilla = nuevaMatriz->verificarCasilla(x, yi);
+                            if(existeCasilla == 'N'){
+                                nuevaMatriz->add(x, yi, "v", color);
+                            }
+                        }
+                    }else if((yf - yi) != 0){
+                        for(int y = yi; y <= yf; y++){
+                            if(nuevaMatriz->verificarCasilla(xi, y) == 'N'){
+                                nuevaMatriz->add(xi, y, "v", color);
+                            }
+                        }
+                    }else{
+                        if(nuevaMatriz->verificarCasilla(xi, yi) == 'N'){
+                                nuevaMatriz->add(xi, yi, "v", color);
+                        }
+                    }
+                }//fin insertar ventanas
+                //##########INSERTAR objetos##########
+                json objetos = nuevoNivel["objetos"];
+                int dcant = objetos.size();
+                for(int i = 0; i < dcant; i++){
+                    json objeto = objetos[i];
+                    //creo el nodo del arbol
+                    int jIdentificador = objeto["identificador"];
+                    string jNombre = objeto["nombre"];
+                    string jLetra = objeto["letra"];
+                    string jColor = objeto["color"];
+
+                    //creo la lista del nodo del arbol del nivel
+                    json coordenadas = objeto["puntos"];
+                    int cant = coordenadas.size();
+                    listaObjetos *nuevoObjeto = new listaObjetos();
+                    //creo la lista del nodo del arbol general
+                    listaObjetos *nuevoObjetoOrigen = new listaObjetos();
+                    json valorInicial = coordenadas[0];
+                    int a = valorInicial["x"];
+                    int b = valorInicial["y"];
+
+                    for(int j = 0; j < cant; j++){
+                        json valores = coordenadas[j];
+                        int x = valores["x"];
+                        int y = valores["y"];
+                        int cx = x - a;
+                        int cy = y - b;
+                        nuevoObjeto->insertar(x, y);
+                        nuevoObjetoOrigen->insertar(cx, cy);
+                    }
+                    /*cout<<"\n objeto en nivel"<<endl;
+                    nuevoObjeto->mostrar();
+                    cout<<"\n objeto en general"<<endl;
+                    nuevoObjetoOrigen->mostrar();*/
+                    //verifico que se pueda insertar en la matriz
+                    bool insertar = true;
+                    nodoListaObjetos *temp = nuevoObjeto->primero;
+                    while (insertar == true && temp != NULL){
+                        char verificar = nuevaMatriz->verificarCasilla(temp->x, temp->y);
+                        if(verificar != 'N'){
+                            insertar = false;
+                            //DECIR QUE OBJETO NO SE PUDO INSERTAR
+                            cout<<"el objeto "<<jNombre<<" no puede insertarse en esta posicion"<<endl;
+                        }
+                        temp = temp->siguiente;
+                    }
+
+                    //inserto el objeto al arbol y a la matriz
+                    if(insertar){
+                        nuevoArbol->add(new nodoBST(jIdentificador, jNombre, jLetra, jColor), nuevoObjeto);
+                        general->add(new nodoBST(jIdentificador, jNombre, jLetra, jColor), nuevoObjetoOrigen);
+                        nodoListaObjetos *ingresar = nuevoObjeto->primero;
+                        while(ingresar != NULL){
+                            nuevaMatriz->add(ingresar->x, ingresar->y, jLetra, jColor);
+                            ingresar = ingresar->siguiente;
+                        }
+                    }
+                    //nuevaLista->mostrar();
+                }
+                nuevaListaNiveles->insertar(nivel, nuevaMatriz, nuevoArbol);
+            }//Cierra el nivel
+            principal->insertar(nombre, nuevaListaNiveles);
+        }//esta llave cierra la lectura de UN proyecto
+        cout<<"el archivo fue leido exitosamente"<<endl;
+    }//esta llave cierra la lectura del documento json
+}
+
+/*########## PRUEBA GENERAL DE TODAS LAS ESTRUCTURAS ##########*/
+void insertaravl(AVL *intentar){
+    //Matrices a insertar
+    matrix *matrizI = new matrix;
+    matrizI->add(1,1,"K","#F6FB34");
+    matrizI->add(2,2,"E","#F6FB34");
+    matrizI->add(3,3,"V","#F6FB34");
+    matrizI->add(3,2,"I","#F6FB34");
+    matrizI->add(2,3,"N","#F6FB34");
+
+    matrix *matrizII = new matrix;
+    matrizII->add(1,1,"M","#F6FB34");
+    matrizII->add(2,2,"A","#F6FB34");
+    matrizII->add(3,3,"R","#F6FB34");
+    matrizII->add(3,2,"T","#F6FB34");
+    matrizII->add(2,5,"I","#F6FB34");
+    matrizII->add(2,6,"N","#F6FB34");
+
+    matrix *matrizIII = new matrix;
+    matrizIII->add(1,1,"S","#F6FB34");
+    matrizIII->add(2,2,"A","#F6FB34");
+    matrizIII->add(3,3,"M","#F6FB34");
+    matrizIII->add(3,2,"A","#F6FB34");
+    matrizIII->add(2,3,"Y","#F6FB34");
+    matrizIII->add(2,5,"O","#F6FB34");
+    matrizIII->add(2,6,"A","#F6FB34");
+
+    matrix *matrizIIII = new matrix;
+    matrizIIII->add(1,1,"U","#F6FB34");
+    matrizIIII->add(2,2,"R","#F6FB34");
+    matrizIIII->add(3,3,"I","#F6FB34");
+    matrizIIII->add(3,2,"Z","#F6FB34");
+    matrizIIII->add(2,3,"A","#F6FB34");
+    matrizIIII->add(2,4,"R","#F6FB34");
+
+    //Lista de los objetos del arbol
+    listaObjetos *nuevoObjeto = new listaObjetos();
+    nuevoObjeto->insertar(1, 1);
+    nuevoObjeto->insertar(2, 2);
+
+    listaObjetos *nuevoObjeto2 = new listaObjetos();
+    nuevoObjeto2->insertar(3, 3);
+    nuevoObjeto2->insertar(4, 4);
+
+    listaObjetos *nuevoObjeto3 = new listaObjetos();
+    nuevoObjeto3->insertar(5, 5);
+    nuevoObjeto3->insertar(6, 6);
+
+    listaObjetos *nuevoObjeto4 = new listaObjetos();
+    nuevoObjeto4->insertar(7, 7);
+    nuevoObjeto4->insertar(8, 8);
+
+    listaObjetos *nuevoObjeto5 = new listaObjetos();
+    nuevoObjeto5->insertar(9, 9);
+    nuevoObjeto5->insertar(10, 10);
+
+    listaObjetos *nuevoObjeto6 = new listaObjetos();
+    nuevoObjeto6->insertar(11, 11);
+    nuevoObjeto6->insertar(12, 12);
+
+    listaObjetos *nuevoObjeto7 = new listaObjetos();
+    nuevoObjeto7->insertar(13, 13);
+    nuevoObjeto7->insertar(14, 14);
+
+    listaObjetos *nuevoObjeto8 = new listaObjetos();
+    nuevoObjeto8->insertar(15, 15);
+    nuevoObjeto8->insertar(16, 16);
+
+    //Arboles a insertar
+    BST *arbolI = new BST;
+    arbolI->add(new nodoBST(100, "kevin", "KS", "sadfsadf"), nuevoObjeto);
+    arbolI->add(new nodoBST(200, "Juan", "J", "fdsldf"), nuevoObjeto2);
+
+    BST *arbolII = new BST;
+    arbolII->add(new nodoBST(300, "kevin", "KS", "sadfsadf"), nuevoObjeto3);
+    arbolII->add(new nodoBST(400, "Juan", "J", "fdsldf"), nuevoObjeto4);
+
+    BST *arbolIII = new BST;
+    arbolIII->add(new nodoBST(500, "Juan", "J", "fdsldf"), nuevoObjeto5);
+    arbolIII->add(new nodoBST(600, "Juan", "J", "fdsldf"), nuevoObjeto6);
+
+    BST *arbolIIII = new BST;
+    arbolIIII->add(new nodoBST(700, "Juan", "J", "fdsldf"), nuevoObjeto7);
+    arbolIIII->add(new nodoBST(800, "Juan", "J", "fdsldf"), nuevoObjeto8);
+
+    //Niveles a insertar
+    listaNiveles *ln = new listaNiveles;
+    ln->insertar(1, matrizI, arbolI);
+    ln->insertar(2, matrizII, arbolII);
+
+    listaNiveles *ln2 = new listaNiveles;
+    ln2->insertar(3, matrizIII, arbolIII);
+    ln2->insertar(4, matrizIIII, arbolIIII);
+
+    intentar->insertar("valor1", ln);
+    intentar->insertar("valor2", ln2);
+
+
+}
+
 
 int main(){
 
 /*========== VALORES DE PRUEBA PARA LAS ESTRUCTURAS ==========*/
+    //AVL *intentar = new AVL;
+    //insertaravl(intentar);
+    //intentar->AVLReporter();
 
-    //string prueba = "#F6FB34";
-    //string prueba = "";
-    //cout<<prueba<<endl;
-    /*matrix *matriz = new matrix;
-    //add(int x, int y, string letra, string color)
-    matriz->add(1,1,"P","#F6FB34");
-    matriz->add(2,2,"P","#F6FB34");
-    matriz->add(3,3,"P","#F6FB34");
-    matriz->add(3,2,"P","#F6FB34");
-    matriz->add(2,3,"P","#F6FB34");
-    //matriz->add(1,1,"S","#F6FB34"); //VALIDAR QUE YA EXISTE FICHA, VER SI SE EVALUA EN EL METODO INSERTAR O APARTE EN LA FUNCIONAIDAD
-    matriz->reporteMatriz();*/
-
-    AVL *arbol = new AVL();
-    arbol->insertar("casa");
-    arbol->insertar("casa 1");
-    arbol->insertar("casa 2");
-    arbol->insertar("casa 3");
-    //arbol->insertar(85);
-    //arbol->insertar(150);
-    //arbol->insertar(80);
-    //arbol->insertar(90);
-    //arbol->insertar(175);
-    //arbol->inOrden(arbol->obtenerRaiz());
-    arbol->inOrden();
-    arbol->AVLReporter();
-    system("pause");
-    /*arbol->eliminar(50);
-    arbol->AVLReporter();
-    system("pause");
-    arbol->insertar(175);
-    arbol->AVLReporter();*/
-
-    /*BST *tree = new BST();
-    listaObjetos *nuevoObjeto = new listaObjetos();
-    nuevoObjeto->insertar(3, 4);
-    nuevoObjeto->insertar(5, 8);
-
-    //Algoritmo para insertar un objeto al arbol
-    //crear el nodo del objeto (nodoBST)
-    //crear lista de puntos del objeto (listaObjetos)
-    //enviar ambos al metodo add del arbol
-    tree->add(new nodoBST(50, "kevin", "KS", "sadfsadf"), nuevoObjeto);
-    system("pause");
-
-    cout<<"impresion de lista desde el arbol"<<endl;
-    tree->actualNodo(50)->lista->mostrar();
-    cout<<"tamaño"<<endl;
-    cout<<tree->actualNodo(50)->lista->magnitud()<<endl;
-
-    system("pause");
-    //mostrar->mostrar();*/
-
-    /*tree->inorderReporter();
-    cout<<"Recorrido en orden"<<endl;
-    system("pause");
-    tree->preOrderReporter();
-    cout<<"Recorrido pre orden"<<endl;
-    system("pause");
-    tree->posOrderReporter();
-    cout<<"Recorrido pos orden"<<endl;
+    //Mostrar lista de niveles completa
+    //cout<<"lista de niveles del proyecto"<<endl;
+    //intentar->proyecto("valor1")->listaN->mostrar();
+    //Mostrar matriz de cierto nivel
+    //intentar->proyecto("valor1")->listaN->mostrarProyecto();
+    //Mostrar arbol del nivel
+    //intentar->proyecto("valor2")->listaN->abbVer(5)->BSTReporter();
+    //Mostrar lista de objetos por nivel
+    //intentar->proyecto("valor2")->listaN->abbVer(5)->mostrarArbolLista();
+    //intentar->proyecto("valor2")->listaN->abbVer(4)->actualNodo(100)->lista->mostrar();
+    //system("pause");
+    //ELIMINAR UN NIVEL
+    /*matrix *matrizI = new matrix;
+    BST *arbolI = new BST;
+    listaNiveles *prueba = new listaNiveles;
+    prueba->insertar(1, matrizI, arbolI);
+    prueba->insertar(2, matrizI, arbolI);
+    prueba->insertar(3, matrizI, arbolI);
+    prueba->insertar(4, matrizI, arbolI);
+    prueba->mostrar();
+    prueba->eliminarNivel(1);
+    cout<<"nueva lista"<<endl;
+    prueba->mostrar();
     system("pause");*/
 
 /*========== CODIGO DEL PROGRAMA ==========*/
 
 /*========== VALORES INICIALES GENERALES ==========*/
-//listaObjetos *nuevoObjeto = new listaObjetos();
-
+    BST *objetosGlobal = new BST;
+    AVL *proyectos = new AVL;
 /*========== CODIGO DEL PROGRAMA ==========*/
+
     int opc;
     char aux [20];
     do
@@ -1716,28 +2483,363 @@ int main(){
         cout<<"4. Graficar Proyectos"<<endl;
         cout<<"5. Guardar Proyectos"<<endl;
         cout<<"6. Cargar Librerias"<<endl;
-        cout<<"7. Salir"<<endl;
+        cout<<"7. Reportes"<<endl;
+        cout<<"8. Salir"<<endl;
         scanf("%s", aux);
         opc = atoi(aux);
-        string fileName;
+        string fileName;//Para recibir ruta/nombre de archivo json
+        string nombreProyecto;//para buscar un proyecto
 
         if(opc != 0){
-            switch(opc)
-            {
-            //Insert image
+            switch(opc){
             case 1:
                 system("cls");
                 cout<<"ver proyectos"<<endl;
+                proyectos->inOrden();
+                cout<<""<<endl;
+                int opcVP;
+                char aux [20];
+                do
+                {
+                    cout<<""<<endl;
+                    cout<<"1. Seleccionar proyecto"<<endl;
+                    cout<<"2. Salir a menu principal"<<endl;
+                    scanf("%s", aux);
+                    opcVP = atoi(aux);
+                    string nombreP;
+                    if(opcVP != 0){
+                        switch(opcVP){
+                        case 1:
+                            cout<<""<<endl;
+                            cout<<"ingrese el nombre del proyecto: "<<endl;
+                            cin>>nombreP;
+                            //ver todas las matrices de un proyecto
+                            proyectos->proyecto(nombreP)->listaN->mostrarProyecto();
+                            opcVP = 2;
+                        case 2:
+                            //system("cls");
+                            cout<<""<<endl;
+                            //system("Pause");
+                            break;
+                        default:
+                            cout<<"Opcion incorrecta ";
+                            system("pause");
+                            break;
+                        }
+                    }else{
+                        cout<<""<<endl;
+                        cout<<"Error, se esperaba un numero"<<endl;
+                        cout<<""<<endl;
+                        opcVP = -1;
+                        system("pause");
+                    }
+                }while(opcVP != 2);
                 system("Pause");
                 break;
             case 2:
                 system("cls");
                 cout<<"editar proyectos"<<endl;
+                cout<<""<<endl;
+                cout<<"ingrese el nombre del proyecto: "<<endl;
+                cin>>nombreProyecto;
+
+                if(proyectos->proyecto(nombreProyecto) != NULL){
+                    nodoAVL *pro = proyectos->proyecto(nombreProyecto);
+
+                    //MENU PARA EDITAR EL PROYECTO
+                    int opcEP;
+                    char aux [20];
+                    do
+                    {
+                        system("cls");
+                        cout<<"         MENU"<<endl;
+                        cout<<""<<endl;
+                        cout<<"1. Agregar Nivel"<<endl;
+                        cout<<"2. Editar Nivel"<<endl;
+                        cout<<"3. Eliminar Nivel"<<endl;
+                        cout<<"4. Eliminar Proyecto"<<endl;
+                        cout<<"5. Salir"<<endl;
+                        scanf("%s", aux);
+                        opcVP = atoi(aux);
+                        int eliminarNivel;
+                        int editarNivel;
+                        //string nombreP;
+                        if(opcVP != 0){
+                            switch(opcVP){
+                            case 1:
+                                system("cls");
+                                cout<<"Agregar Nivel"<<endl;
+                                cout<<"formato de ruta: C:/Users/Usuario/Desktop/archivo.json"<<endl;
+                                cout<<"formato de nombre: archivo.json (Para este caso, el archivo debe estar en la carpeta donde se ejecuta el programa)"<<endl;
+                                cout<<""<<endl;
+                                cout<<"ingrese el nombre o direccion del archivo: ";
+                                cin>>fileName;//nombre/ruta del archivo
+                                leerNivel(fileName, pro->listaN, objetosGlobal);
+                                system("Pause");
+                                break;
+                            case 2:
+                                system("cls");
+                                cout<<"Editar Nivel"<<endl;
+                                cout<<""<<endl;
+                                pro->listaN->mostrar();
+                                cout<<""<<endl;
+                                cout<<"Ingrese el numero de nivel que desea editar"<<endl;
+                                cin>>editarNivel;
+                                if(pro->listaN->matrizVer(editarNivel) != NULL){
+                                    matrix *editar = new matrix;
+                                    BST *editArbol = new BST;
+                                    editar = pro->listaN->matrizVer(editarNivel);
+                                    editArbol = pro->listaN->abbVer(editarNivel);
+                                    editar->reporteMatriz();
+                                    //MENU OBJETOS
+                                    int opcObj;
+                                    char aux [20];
+                                    do
+                                    {
+                                        system("cls");
+                                        cout<<"      MENU"<<endl;
+                                        cout<<""<<endl;
+                                        cout<<"1. Agregar Objeto"<<endl;
+                                        cout<<"2. Eliminar objeto"<<endl;
+                                        cout<<"3. Mover objeto"<<endl;
+                                        cout<<"4. Salir"<<endl;
+                                        scanf("%s", aux);
+                                        opcObj = atoi(aux);
+                                        int idObjeto;
+                                        int posX;
+                                        int posY;
+
+                                        if(opcObj != 0){
+                                            switch(opcObj){
+                                            case 1:
+                                                system("cls");
+                                                //INSERTAR OBJETO
+                                                cout<<"Objetos"<<endl;
+                                                cout<<""<<endl;
+                                                cout<<"id, nombre"<<endl;
+                                                objetosGlobal->inorderObjetos();
+                                                cout<<""<<endl;
+                                                cout<<"ingrese el numero de id del objeto que desea agregar"<<endl;
+                                                cin>>idObjeto;
+                                                //OOBTENER EL NODO DEL OBJETO QUE VOY A INSERTAR
+                                                if(objetosGlobal->actualNodo(idObjeto) != NULL){
+                                                    nodoBST *insertar = objetosGlobal->actualNodo(idObjeto);
+                                                    //insertar = objetosGlobal->actualNodo(idObjeto);
+                                                    //cout<<insertar->id<<", "<<insertar->nombre<<endl;
+                                                    //insertar->lista->mostrar();
+                                                    cout<<"ingrese la posicion x"<<endl;
+                                                    cin>>posX;
+                                                    cout<<"ingrese la posicion y"<<endl;
+                                                    cin>>posY;
+                                                    //cout<<"coordenada a insertar: "<<posX<<", "<<posY<<endl;
+                                                    listaObjetos *nuevoEditar = new listaObjetos;
+                                                    nodoListaObjetos *tempo = insertar->lista->primero;
+                                                    while(tempo != NULL){
+                                                        int x = tempo->x + posX;
+                                                        int y = tempo->y + posY;
+                                                        nuevoEditar->insertar(x,y);
+                                                        tempo = tempo->siguiente;
+                                                    }
+                                                    //nuevoEditar->mostrar();
+                                                    //verifico que se pueda insertar en la matriz
+                                                    bool inser = true;
+                                                    nodoListaObjetos *temp = nuevoEditar->primero;
+                                                    while (inser == true && temp != NULL){
+                                                        char verificar = editar->verificarCasilla(temp->x, temp->y);
+                                                        if(verificar != 'N'){
+                                                            inser = false;
+                                                        }
+                                                        temp = temp->siguiente;
+                                                    }
+                                                    //inserto el objeto al arbol y a la matriz
+                                                    if(inser){
+                                                        if(editArbol->add2(new nodoBST(insertar->id, insertar->nombre, insertar->letra, insertar->color), nuevoEditar) == 'S'){
+                                                            nodoListaObjetos *ingresar = nuevoEditar->primero;
+                                                            while(ingresar != NULL){
+                                                                editar->add(ingresar->x, ingresar->y, insertar->letra, insertar->color);
+                                                                ingresar = ingresar->siguiente;
+                                                            }
+                                                        }
+                                                    }
+                                                    //editar->reporteMatriz();
+                                                    //editArbol->BSTReporter();
+                                                    //editArbol->mostrarArbolLista();
+                                                }
+                                                system("Pause");
+                                                break;
+                                            case 2:
+                                                system("cls");
+                                                cout<<"Eliminar Objeto"<<endl;
+                                                cout<<""<<endl;
+                                                cout<<"id, nombre"<<endl;
+                                                editArbol->inorderObjetos();
+                                                cout<<""<<endl;
+                                                cout<<"ingrese el numero de id del objeto que desea agregar"<<endl;
+                                                cin>>idObjeto;
+                                                if(editArbol->actualNodo(idObjeto) != NULL){
+                                                    nodoBST *eliminar = editArbol->actualNodo(idObjeto);
+                                                    nodoListaObjetos *eliminarObjeto = eliminar->lista->primero;
+                                                    while(eliminarObjeto != NULL){
+                                                        editar->del(eliminarObjeto->x, eliminarObjeto->y);
+                                                        eliminarObjeto = eliminarObjeto->siguiente;
+                                                    }
+                                                    editArbol->eliminar1(idObjeto);
+                                                }
+                                                system("Pause");
+                                                break;
+                                            case 3:
+                                                system("cls");
+                                                cout<<"Mover Objeto"<<endl;
+                                                cout<<""<<endl;
+                                                cout<<"id, nombre"<<endl;
+                                                editArbol->inorderObjetos();
+                                                cout<<""<<endl;
+                                                cout<<"ingrese el numero de id del objeto que desea Mover"<<endl;
+                                                cin>>idObjeto;
+                                                if(editArbol->actualNodo(idObjeto) != NULL){
+                                                    cout<<"ingrese la posicion x"<<endl;
+                                                    cin>>posX;
+                                                    cout<<"ingrese la posicion y"<<endl;
+                                                    cin>>posY;
+                                                    //objeto que quiero mover
+                                                    nodoBST *mover = editArbol->actualNodo(idObjeto);
+                                                    //Matriz temporal para ver que el movimiento es valido
+                                                    matrix *matrizTemporal = new matrix();
+                                                    matrizTemporal = editar;
+
+                                                    nodoListaObjetos *moverObjeto = mover->lista->primero;
+                                                    //Elimina el objeto para dejar ese espacio libre
+                                                    while(moverObjeto != NULL){
+                                                        matrizTemporal->del(moverObjeto->x, moverObjeto->y);
+                                                        moverObjeto = moverObjeto->siguiente;
+                                                    }
+
+                                                    listaObjetos *nuevoMover = new listaObjetos;
+                                                    nodoListaObjetos *tempo = objetosGlobal->actualNodo(idObjeto)->lista->primero;
+                                                    //nodoListaObjetos *tempo = mover->lista->primero;
+                                                    while(tempo != NULL){
+                                                        int x = tempo->x + posX;
+                                                        int y = tempo->y + posY;
+                                                        nuevoMover->insertar(x,y);
+                                                        tempo = tempo->siguiente;
+                                                    }
+                                                    //nuevoEditar->mostrar();
+                                                    //verifico que se pueda insertar en la matriz
+                                                    bool inser = true;
+                                                    nodoListaObjetos *temp = nuevoMover->primero;
+                                                    while (inser == true && temp != NULL){
+                                                        char verificar = matrizTemporal->verificarCasilla(temp->x, temp->y);
+                                                        if(verificar != 'N'){
+                                                            inser = false;
+                                                        }
+                                                        temp = temp->siguiente;
+                                                    }
+
+                                                    //nodoBST *insertar = objetosGlobal->actualNodo(idObjeto);
+                                                    //cout<<"antes de mover los puntos"<<endl;
+                                                    //editArbol->mostrarArbolLista();
+
+                                                    //si se puede mover
+                                                    if(inser){
+
+                                                        nodoListaObjetos *moverFinal = nuevoMover->primero;
+                                                        while(moverFinal != NULL){
+                                                            editar->add(moverFinal->x, moverFinal->y, mover->letra, mover->color);
+                                                            moverFinal = moverFinal->siguiente;
+                                                        }
+
+                                                        //actualizo la lista del nodo del arbol que estoy editando
+                                                        editArbol->actualNodo(idObjeto)->lista = nuevoMover;
+                                                    }else{
+                                                        nodoListaObjetos *moverObjeto2 = mover->lista->primero;
+                                                        while(moverObjeto2 != NULL){
+                                                            editar->add(moverObjeto2->x, moverObjeto2->y, mover->letra, mover->color);
+                                                            moverObjeto2 = moverObjeto2->siguiente;
+                                                        }
+                                                    }
+                                                    /*editar->reporteMatriz();
+                                                    editArbol->BSTReporter();
+                                                    cout<<"\" despues de mover los puntos"<<endl;
+                                                    editArbol->mostrarArbolLista();*/
+
+                                                }
+                                                system("pause");
+                                                break;
+                                            case 4:
+                                                system("cls");
+
+                                                break;
+                                            default:
+                                                cout<<"Opcion incorrecta "<<endl;
+                                                system("pause");
+                                                break;
+                                            }
+                                        }else{
+                                            cout<<""<<endl;
+                                            cout<<"Error, se esperaba un numero"<<endl;
+                                            cout<<""<<endl;
+                                            opcObj = -1;
+                                            system("pause");
+                                        }
+                                    }while(opcObj != 4);
+                                }else{
+                                    cout<<"Nivel incorrecto"<<endl;
+                                }
+                                system("Pause");
+                                break;
+                            case 3:
+                                system("cls");
+                                cout<<"Eliminar Nivel"<<endl;
+                                cout<<""<<endl;
+                                cout<<"ingrese el numero de nivel que desea eliminar"<<endl;
+                                cin>>eliminarNivel;
+                                pro->listaN->eliminarNivel(eliminarNivel);
+                                system("Pause");
+                                break;
+                            case 4:
+                                system("cls");
+                                cout<<"Eliminar Proyecto"<<endl;
+                                cout<<""<<endl;
+                                proyectos->eliminar(nombreProyecto);
+                                system("Pause");
+                                break;
+                            case 5:
+                                //system("cls");
+                                //cout<<""<<endl;
+                                //system("Pause");
+                                break;
+                            default:
+                                cout<<"Opcion incorrecta ";
+                                system("pause");
+                                break;
+                            }
+                        }else{
+                            cout<<"Error, se esperaba un numero"<<endl;
+                            opcVP = -1;
+                            system("pause");
+                        }
+                    }while(opcVP != 5);
+
+
+
+
+                }else{
+                    cout<<"El proyecto no existe"<<endl;
+                }
+
                 system("Pause");
                 break;
             case 3:
                 system("cls");
                 cout<<"cargar proyecto"<<endl;
+                cout<<"formato de ruta: C:/Users/Usuario/Desktop/archivo.json"<<endl;
+                cout<<"formato de nombre: archivo.json (Para este caso, el archivo debe estar en la carpeta donde se ejecuta el programa)"<<endl;
+                cout<<""<<endl;
+                cout<<""<<endl;
+                cout<<"ingrese el nombre o direccion del archivo: ";
+                cin>>fileName;//nombre/ruta del archivo
+                //leerNivel(fileName, pruebaLista, objetosGlobal);
+                leerProyecto(fileName, proyectos, objetosGlobal);
                 system("Pause");
                 break;
             case 4:
@@ -1753,28 +2855,129 @@ int main(){
             case 6:
                 system("cls");
                 cout<<"cargar librerias"<<endl;
-                /*string fName = archivo;//nombre/ruta del archivo
-                json jfile;//declaro un objeto de tipo json
-                ifstream doc(fName);//modificar para recibir la ruta del archivo
-                //if(-doc.is_open()) std::cout<<"ERROR: No se pudo abrir el archivo"<<endl;
-                if(!doc.is_open()){
-                    cout<<"ERROR: No se pudo abrir el archivo. Verifique la ruta o que el archivo exista"<<endl;
-                }else{
-                    doc>>jfile;//paso el contenido al reader.
-                    //json casillas = jfile["niveles"];
-                    //leo la lista de objetos
-                    json objetos = jfile["objetos"];
-
-                */
+                cout<<"formato de ruta: C:/Users/Usuario/Desktop/archivo.json"<<endl;
+                cout<<"formato de nombre: archivo.json (Para este caso, el archivo debe estar en la carpeta donde se ejecuta el programa)"<<endl;
+                cout<<""<<endl;
+                cout<<"ingrese el nombre o direccion del archivo: ";
+                cin>>fileName;//nombre/ruta del archivo
+                leerJsonLibrerias(objetosGlobal, fileName);
+                //objetosGlobal->mostrarArbolLista();
                 system("Pause");
                 break;
             case 7:
+                system("cls");
+                cout<<"Reportes"<<endl;
+                int opcReportes;
+                char auxReportes [20];
+                do
+                {
+                    system("cls");
+                    cout<<"Ingrese un tipo de reporte:"<<endl;
+                    cout<<"1.  Arbol AVL de proyectos"<<endl;
+                    cout<<"2.  Arbol binario de busqueda general de objetos"<<endl;
+                    cout<<"3.  Proyectos con mayor numero de niveles de forma descendente"<<endl;
+                    cout<<"4.  Proyectos con mayor numero de niveles de forma ascendente"<<endl;
+                    cout<<"5.  Niveles de forma ordenada por el número de objetos de menor a mayor (en un proyecto)"<<endl;
+                    cout<<"6.  Nivel con mas espacio (en un proyecto)"<<endl;
+                    cout<<"7.  Nivel con menos paredes (en un proyecto)"<<endl;
+                    cout<<"8.  Nivel con mas paredes (en un proyecto)"<<endl;
+                    cout<<"9.  Nivel con mas espacio y mas ventanas (en un proyecto)"<<endl;
+                    cout<<"10. Nivel con mas espacio y menos ventanas (en un proyecto)"<<endl;
+                    cout<<"11. Salir"<<endl;
+                    scanf("%s", auxReportes);
+                    opcReportes = atoi(auxReportes);
+                    string UsuarioReporte;
+                    if(opcReportes != 0){
+                        switch(opcReportes)
+                        {
+                        //Insert image
+                        case 1:
+                            system("cls");
+                            cout<<"Arbol AVL de proyectos"<<endl;
+                            proyectos->AVLReporter();
+                            system("Pause");
+                            break;
+                        case 2:
+                            system("cls");
+                            cout<<"Libreria de objetos (ABB principal)"<<endl;
+                            objetosGlobal->BSTReporter();
+                            system("Pause");
+                            break;
+                        case 3:
+                            system("cls");
+                            cout<<"Proyectos con mayor numero de niveles de forma descendente"<<endl;
+
+                            system("Pause");
+                            break;
+                        case 4:
+                            system("cls");
+                            cout<<"Proyectos con mayor numero de niveles de forma ascendente"<<endl;
+
+                            system("Pause");
+                            break;
+                        case 5:
+                            system("cls");
+                            cout<<"Niveles de forma ordenada por el número de objetos de menor a mayor (en un proyecto)"<<endl;
+
+                            system("Pause");
+                            break;
+                        case 6:
+                            system("cls");
+                            cout<<"Nivel con mas espacio (en un proyecto)"<<endl;
+
+                            system("Pause");
+                            break;
+                        case 7:
+                            system("cls");
+                            cout<<"Nivel con menos paredes (en un proyecto)"<<endl;
+
+                            system("Pause");
+                            break;
+                        case 8:
+                            system("cls");
+                            cout<<"Nivel con mas paredes (en un proyecto)"<<endl;
+
+                            system("Pause");
+                            break;
+                        case 9:
+                            system("cls");
+                            cout<<"Nivel con mas espacio y mas ventanas (en un proyecto)"<<endl;
+
+                            system("Pause");
+                            break;
+                        case 10:
+                            system("cls");
+                            cout<<"Nivel con mas espacio y menos ventanas (en un proyecto)"<<endl;
+
+                            system("Pause");
+                            break;
+                        case 11:
+                            system("cls");
+                            cout<<"Regresar a menu principal"<<endl;
+
+                            //system("Pause");//comentado para que no aparezca dos veces
+                            //presionar una tecla para continuar
+                            break;
+                        default:
+                            cout<<"Opcion incorrecta";
+                            system("pause");
+                            break;
+                        }
+                    }else{
+                        cout<<"Error, se esperaba un numero"<<endl;
+                        opcReportes = -1;
+                        system("pause");
+                    }
+                }while(opcReportes != 11);
+                system("Pause");
+                break;
+            case 8:
                 system("cls");
                 cout<<"hasta luego"<<endl;
                 system("Pause");
                 break;
             default:
-                cout<<"Opcion incorrecta";
+                cout<<"Opcion incorrecta ";
                 system("pause");
                 break;
             }
@@ -1786,7 +2989,7 @@ int main(){
             system("pause");
         }
 
-    }while(opc != 7);
+    }while(opc != 8);
 
     return 0;
 }

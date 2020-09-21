@@ -1,7 +1,7 @@
 {
   "niveles": [
     {
-      "nivel": 2,
+      "nivel": 1,
       "paredes": [
         {
           "inicio": [
@@ -70,7 +70,30 @@
           "color": "#F6FB34"
         }
       ],
-      "ventanas": [],
+      "ventanas": [
+	{
+          "inicio": [
+            5,
+            1
+          ],
+          "final": [
+            9,
+            1
+          ],
+          "color": "#B0E0E6"
+        },
+	{
+          "inicio": [
+            9,
+            2
+          ],
+          "final": [
+            9,
+            5
+          ],
+          "color": "#B0E0E6"
+        }		
+      ],
       "objetos": [
         {
           "identificador": 1,

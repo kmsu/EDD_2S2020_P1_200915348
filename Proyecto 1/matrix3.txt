@@ -4,36 +4,41 @@ node [shape = rectangle];
 graph [nodesep = 0.5];
 labelloc=t;
 fontsize=20;
-"nodeX_-1" [label="     Nivel 4     "];
+"nodeX_-1" [label="     Nivel 3     "];
 nodeX_1 [label="        1       "];
 nodeX_2 [label="        2       "];
 nodeX_3 [label="        3        "];
 nodeY_1 [label="        1       "];
 nodeY_2 [label="        2       "];
 nodeY_3 [label="        3       "];
-nodeY_4 [label="        4       "];
-node1_1 [label = "        U       " style=filled fillcolor=" #F6FB34"];
-node2_2 [label = "        R       " style=filled fillcolor=" #F6FB34"];
-node2_3 [label = "        A       " style=filled fillcolor=" #F6FB34"];
-node2_4 [label = "        R       " style=filled fillcolor=" #F6FB34"];
-node3_2 [label = "        Z       " style=filled fillcolor=" #F6FB34"];
-node3_3 [label = "        I       " style=filled fillcolor=" #F6FB34"];
+nodeY_5 [label="        5       "];
+nodeY_6 [label="        6       "];
+node1_1 [label = "        S       " style=filled fillcolor=" #F6FB34"];
+node2_2 [label = "        A       " style=filled fillcolor=" #F6FB34"];
+node2_3 [label = "        Y       " style=filled fillcolor=" #F6FB34"];
+node2_5 [label = "        O       " style=filled fillcolor=" #F6FB34"];
+node2_6 [label = "        A       " style=filled fillcolor=" #F6FB34"];
+node3_2 [label = "        A       " style=filled fillcolor=" #F6FB34"];
+node3_3 [label = "        M       " style=filled fillcolor=" #F6FB34"];
 {rank=same; "nodeX_-1" nodeX_1 nodeX_2 nodeX_3}
 {rank=same; nodeY_1 node1_1}
 {rank=same; nodeY_2 node2_2 node3_2}
 {rank=same; nodeY_3 node2_3 node3_3}
-{rank=same; nodeY_4 node2_4}
+{rank=same; nodeY_5 node2_5}
+{rank=same; nodeY_6 node2_6}
 "nodeX_-1" -> nodeX_1 [dir=both];
 "nodeX_1" -> nodeX_2 [dir=both];
 "nodeX_2" -> nodeX_3 [dir=both];
 "nodeX_-1" -> nodeY_1 [dir=both];
 nodeY_1 -> nodeY_2 [dir=both];
 nodeY_2 -> nodeY_3 [dir=both];
-nodeY_3 -> nodeY_4 [dir=both];
+nodeY_3 -> nodeY_5 [dir=both];
+nodeY_5 -> nodeY_6 [dir=both];
 nodeX_1 -> node1_1 [dir=both];
 nodeX_2 -> node2_2 [dir=both];
 node2_2 -> node2_3 [dir=both];
-node2_3 -> node2_4 [dir=both];
+node2_3 -> node2_5 [dir=both];
+node2_5 -> node2_6 [dir=both];
 nodeX_3 -> node3_2 [dir=both];
 node3_2 -> node3_3 [dir=both];
 nodeY_1 -> node1_1 [constraint=false,dir=both];
@@ -41,5 +46,6 @@ nodeY_2 -> node2_2 [constraint=false,dir=both];
 node2_2 -> node3_2 [constraint=false,dir=both];
 nodeY_3 -> node2_3 [constraint=false,dir=both];
 node2_3 -> node3_3 [constraint=false,dir=both];
-nodeY_4 -> node2_4 [constraint=false,dir=both];
+nodeY_5 -> node2_5 [constraint=false,dir=both];
+nodeY_6 -> node2_6 [constraint=false,dir=both];
 }

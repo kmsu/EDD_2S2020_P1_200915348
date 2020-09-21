@@ -2,7 +2,7 @@
 {
   "Libreria": [
     {
-      "identificador": 1,
+      "identificador": 10,
       "nombre": "Sofa",
       "letra": "S",
       "color": "#FDB546",
@@ -22,7 +22,7 @@
       ]
     },
     {
-      "identificador": 2,
+      "identificador": 20,
       "nombre": "Television",
       "letra": "T",
       "color": "#E6E6E6",
@@ -34,7 +34,7 @@
       ]
     },
     {
-      "identificador": 3,
+      "identificador": 30,
       "nombre": "planta",
       "letra": "F",
       "color": "#50CB0A",
@@ -46,7 +46,7 @@
       ]
     },
     {
-      "identificador": 4,
+      "identificador": 40,
       "nombre": "mesa",
       "letra": "M",
       "color": "#0A18CB",

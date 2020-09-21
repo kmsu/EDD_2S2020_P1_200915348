@@ -1,3 +1,22 @@
 digraph Tree {
-50
+22[label="", style="invis"];
+2 -> 22[style = "invis"];
+23[label="", style="invis"];
+2 -> 23[style = "invis"];
+2 -> 3
+32[label="", style="invis"];
+3 -> 32[style = "invis"];
+33[label="", style="invis"];
+3 -> 33[style = "invis"];
+3 -> 4
+42[label="", style="invis"];
+4 -> 42[style = "invis"];
+43[label="", style="invis"];
+4 -> 43[style = "invis"];
+4 -> 5
+52[label="", style="invis"];
+5 -> 52[style = "invis"];
+53[label="", style="invis"];
+5 -> 53[style = "invis"];
+5 -> 6
 }

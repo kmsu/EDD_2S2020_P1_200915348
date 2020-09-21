@@ -1,0 +1,8 @@
+digraph G {
+rankdir = TB;
+node [shape = rectangle];
+graph [nodesep = 0.5];
+labelloc=t;
+fontsize=20;
+"nodeX_0" [label="     Nivel 5185928     "];
+nodeX_-400288631 [label="        -400288631       "];
