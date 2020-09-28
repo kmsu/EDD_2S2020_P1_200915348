@@ -1486,6 +1486,118 @@ public:
     }
 };
 
+
+class nodoListaAscendete{
+public:
+    nodoListaAscendete *siguiente;
+    string proyecto;
+    int noNiveles;
+
+    nodoListaAscendete(string nombre, int niveles){
+        this->proyecto = nombre;
+        this->noNiveles = niveles;
+        siguiente = NULL;
+    }
+};
+
+class listaAscendente{
+public:
+    nodoListaAscendete *primero;
+    nodoListaAscendete *ultimo;
+    int tam = 0;//tamaño
+
+    listaAscendente()
+    {
+        primero = NULL;
+        ultimo = NULL;
+    }
+
+    int magnitud(){
+        return tam;
+    }
+
+    void limpiar(){
+        primero = NULL;
+        ultimo = NULL;
+    }
+
+    void insertar(string nombre, int niveles){
+        nodoListaAscendete *nuevo = new nodoListaAscendete(nombre, niveles);
+        if(primero == NULL)
+        {
+            primero = nuevo;
+            ultimo = nuevo;
+            tam++;
+        }
+        else
+        {
+           nodoListaAscendete *temp = primero;
+            while (temp->siguiente != NULL && temp->siguiente->noNiveles < niveles){
+                temp = temp->siguiente;
+            }
+            if(temp->siguiente == NULL){
+                temp->siguiente = nuevo;
+                ultimo = nuevo;
+                tam++;
+            }else if(temp->siguiente != NULL && temp->noNiveles != niveles){
+                if(temp != primero){
+                    nuevo->siguiente = temp->siguiente;
+                    temp->siguiente = nuevo;
+                }else{
+                    nuevo->siguiente = temp;
+                    primero = nuevo;
+                }
+                tam++;
+            }else{
+                cout<<"El nivel ya existe"<<endl;
+            }
+        }
+    }
+
+    void insertarDesc(string nombre, int niveles){
+        //cout<<"niveles: "<<niveles<<endl;
+        nodoListaAscendete *nuevo = new nodoListaAscendete(nombre, niveles);
+        if(primero == NULL)
+        {
+            primero = nuevo;
+            ultimo = nuevo;
+            tam++;
+        }
+        else
+        {
+           nodoListaAscendete *temp = primero;
+            while (temp->siguiente != NULL && temp->siguiente->noNiveles > niveles){
+                temp = temp->siguiente;
+            }
+            if(temp->siguiente == NULL && nuevo->noNiveles <= temp->noNiveles){
+                temp->siguiente = nuevo;
+                ultimo = nuevo;
+                tam++;
+            //}else if(temp->siguiente != NULL && temp->noNiveles != niveles){
+            }else if(temp->siguiente != NULL){
+                if(temp != primero){
+                    nuevo->siguiente = temp->siguiente;
+                    temp->siguiente = nuevo;
+                }else{
+                    nuevo->siguiente = temp;
+                    primero = nuevo;
+                }
+                tam++;
+            }else{
+                cout<<"El nivel ya existe "<<nuevo->noNiveles<<endl;
+            }
+        }
+    }
+
+    void mostrar(){
+        nodoListaAscendete *temp = primero;
+        while (temp != NULL){
+            cout<<"Nombre de proyecto: "<<temp->proyecto<<", Numero de niveles: "<<temp->noNiveles<<endl;
+            temp = temp->siguiente;
+        }
+    }
+};
+
 class nodoAVL{
 public:
     string key;//nombre del proyecto
@@ -1869,6 +1981,42 @@ public:
         }
     }
 
+    void ascendente(listaAscendente *lista){
+        if(root != NULL){
+            recursiveAscendente(root, lista);
+        }else{
+            cout<<"Aun no se han agregado proyectos"<<endl;
+        }
+
+    }
+
+    void recursiveAscendente(nodoAVL *actual, listaAscendente *lista){
+        if(actual != NULL){
+            recursiveAscendente(actual->left, lista);
+            //cout<<actual->key<<endl;
+            lista->insertar(actual->key, actual->listaN->magnitud());
+            recursiveAscendente(actual->right, lista);
+        }
+    }
+
+    void descendente(listaAscendente *lista){
+        if(root != NULL){
+            recursiveDescendente(root, lista);
+        }else{
+            cout<<"Aun no se han agregado proyectos"<<endl;
+        }
+
+    }
+
+    void recursiveDescendente(nodoAVL *actual, listaAscendente *lista){
+        if(actual != NULL){
+            recursiveDescendente(actual->left, lista);
+            //cout<<actual->key<<endl;
+            lista->insertarDesc(actual->key, actual->listaN->magnitud());
+            recursiveDescendente(actual->right, lista);
+        }
+    }
+
     nodoAVL *proyecto(string nombre){
         nodoAVL *temp = new nodoAVL(nombre);
         if(root != NULL){
@@ -1913,78 +2061,6 @@ public:
         }
     }
 };
-
-class nodoListaAscendete{
-public:
-    nodoListaAscendete *siguiente;
-    string proyecto;
-    int noNiveles;
-
-    nodoListaAscendete(string nombre, int niveles){
-        this->proyecto = nombre;
-        this->noNiveles = niveles;
-        siguiente = NULL;
-    }
-};
-/*
-class listaAscendente{
-public:
-    nodoListaObjetos *primero;
-    nodoListaObjetos *ultimo;
-    int tam = 0;//tamaño
-
-    listaAscendente()
-    {
-        primero = NULL;
-        ultimo = NULL;
-    }
-
-    int magnitud(){
-        return tam;
-    }
-
-    void insertar(string nombre, int niveles){
-        nodoListaAscendete *temp = new nodoListaAscendete(nombre, niveles);
-        if(primero == NULL)
-        {
-            primero = temp;
-            ultimo = temp;
-            tam++;
-        }
-        else
-        {
-           nodoListaAscendete() *temp = primero;
-            while (temp->siguiente != NULL && temp->siguiente->noNiveles < niveles){
-                temp = temp->siguiente;
-            }
-            if(temp->siguiente == NULL){
-                temp->siguiente = nuevo;
-                ultimo = nuevo;
-                tam++;
-            }else if(temp->siguiente != NULL && temp->numNivel != x){
-                if(temp != primero){
-                    nuevo->siguiente = temp->siguiente;
-                    temp->siguiente = nuevo;
-                }else{
-                    nuevo->siguiente = temp;
-                    primero = nuevo;
-                }
-                tam++;
-            }else{
-                cout<<"El nivel ya existe"<<endl;
-            }
-        }
-    }
-
-    void mostrar(){
-        nodoListaObjetos *temp = primero;
-        while (temp != NULL){
-            cout<<temp->x<<", "<<temp->y<<endl;
-            temp = temp->siguiente;
-        }
-    }
-};
-*/
 
 void leerJsonLibrerias(BST *global, string archivo){
     string fName = archivo;
@@ -2366,10 +2442,10 @@ void leerProyecto(string archivo, AVL *principal, BST *general){
                     }
                     //nuevaListaNiveles->insertar(nivel, nuevaMatriz, nuevoArbol);
                 }//Cierra el nivel
-                cout<<nombre<<endl;
-                nuevaListaNiveles->mostrar();
+                //cout<<nombre<<endl;
+                //nuevaListaNiveles->mostrar();
                 //nuevaListaNiveles->mostrarProyecto();
-                system("pause");
+                //system("pause");
                 principal->insertar(nombre, nuevaListaNiveles);
             }//esta llave cierra la lectura de UN proyecto
             //principal->insertar(nombre, nuevaListaNiveles);
@@ -2521,6 +2597,7 @@ int main(){
 /*========== VALORES INICIALES GENERALES ==========*/
     BST *objetosGlobal = new BST;
     AVL *proyectos = new AVL;
+    listaAscendente *ordenar = new listaAscendente;
 /*========== CODIGO DEL PROGRAMA ==========*/
 
     int opc;
@@ -2989,13 +3066,20 @@ int main(){
                         case 3:
                             system("cls");
                             cout<<"Proyectos con mayor numero de niveles de forma descendente"<<endl;
-
+                            //lista para ir ordenando ascendentemente es: ordenar
+                            ordenar->limpiar();
+                            proyectos->descendente(ordenar);
+                            cout<<""<<endl;
+                            ordenar->mostrar();
                             system("Pause");
                             break;
                         case 4:
                             system("cls");
                             cout<<"Proyectos con mayor numero de niveles de forma ascendente"<<endl;
-
+                            ordenar->limpiar();
+                            proyectos->ascendente(ordenar);
+                            cout<<""<<endl;
+                            ordenar->mostrar();
                             system("Pause");
                             break;
                         case 5:
