@@ -1,0 +1,90 @@
+{
+  "proyectos": [
+    {
+      "nombre": "Proyecto1",
+      "niveles": [
+        {
+          "nivel": 1,
+          "paredes": [
+            {
+              "inicio": [
+                0,
+                0
+              ],
+              "final": [
+                10,
+                0
+              ],
+              "color": "#F6FB34"
+            }
+          ],
+          "ventanas": [],
+          "objetos": [
+            {
+              "identificador": 1,
+              "nombre": "Sofa",
+              "letra": "S",
+              "color": "#FDB546",
+              "puntos": [
+                {
+                  "x": 0,
+                  "y": 2
+                },
+                {
+                  "x": 1,
+                  "y": 2
+                },
+                {
+                  "x": 2,
+                  "y": 2
+                }
+              ]
+            }
+          ]
+       },
+      {
+      "nombre": "Proyecto2",
+      "niveles": [
+        {
+          "nivel": 2,
+          "paredes": [
+            {
+              "inicio": [
+                0,
+                0
+              ],
+              "final": [
+                10,
+                0
+              ],
+              "color": "#F6FB34"
+            }
+          ],
+          "ventanas": [],
+          "objetos": [
+            {
+              "identificador": 1,
+              "nombre": "Sofa",
+              "letra": "S",
+              "color": "#FDB546",
+              "puntos": [
+                {
+                  "x": 0,
+                  "y": 2
+                },
+                {
+                  "x": 1,
+                  "y": 2
+                },
+                {
+                  "x": 2,
+                  "y": 2
+                }
+              ]
+            }
+          ]
+	}
+      ]
+    }
+  ]
+}

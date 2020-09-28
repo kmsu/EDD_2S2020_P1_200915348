@@ -1,7 +1,9 @@
 digraph Tree {
-"Proyecto12"[label="", style="invis"];
-"Proyecto1" -> "Proyecto12"[style = "invis"];
-"Proyecto13"[label="", style="invis"];
-"Proyecto1" -> "Proyecto13"[style = "invis"];
-"Proyecto1" -> "Proyecto2"
+"valor2" -> "valor1"
+"valor2" -> "valor3"
+"valor32"[label="", style="invis"];
+"valor3" -> "valor32"[style = "invis"];
+"valor33"[label="", style="invis"];
+"valor3" -> "valor33"[style = "invis"];
+"valor3" -> "valor4"
 }

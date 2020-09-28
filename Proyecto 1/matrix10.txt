@@ -4,7 +4,7 @@ node [shape = rectangle];
 graph [nodesep = 0.5];
 labelloc=t;
 fontsize=20;
-"nodeX_-1" [label="     Nivel 1     "];
+"nodeX_-1" [label="     Nivel 10     "];
 nodeX_0 [label="        0       "];
 nodeX_1 [label="        1       "];
 nodeX_2 [label="        2       "];
@@ -64,6 +64,9 @@ node5_6 [label = "        p       " style=filled fillcolor=" #F6FB34"];
 node5_7 [label = "        p       " style=filled fillcolor=" #F6FB34"];
 node5_8 [label = "        p       " style=filled fillcolor=" #F6FB34"];
 node6_0 [label = "        p       " style=filled fillcolor=" #F6FB34"];
+node6_2 [label = "        v       " style=filled fillcolor=" #B0E0E6"];
+node6_3 [label = "        v       " style=filled fillcolor=" #B0E0E6"];
+node6_4 [label = "        v       " style=filled fillcolor=" #B0E0E6"];
 node6_8 [label = "        p       " style=filled fillcolor=" #F6FB34"];
 node7_0 [label = "        p       " style=filled fillcolor=" #F6FB34"];
 node7_7 [label = "        ES       " style=filled fillcolor=" #02703A"];
@@ -86,9 +89,9 @@ node10_8 [label = "        p       " style=filled fillcolor=" #F6FB34"];
 {rank=same; "nodeX_-1" nodeX_0 nodeX_1 nodeX_2 nodeX_3 nodeX_4 nodeX_5 nodeX_6 nodeX_7 nodeX_8 nodeX_9 nodeX_10}
 {rank=same; nodeY_0 node0_0 node1_0 node2_0 node3_0 node4_0 node5_0 node6_0 node7_0 node8_0 node9_0 node10_0}
 {rank=same; nodeY_1 node0_1 node2_1 node5_1 node10_1}
-{rank=same; nodeY_2 node0_2 node1_2 node2_2 node3_2 node5_2 node10_2}
-{rank=same; nodeY_3 node0_3 node4_3 node5_3 node10_3}
-{rank=same; nodeY_4 node0_4 node1_4 node3_4 node4_4 node5_4 node10_4}
+{rank=same; nodeY_2 node0_2 node1_2 node2_2 node3_2 node5_2 node6_2 node10_2}
+{rank=same; nodeY_3 node0_3 node4_3 node5_3 node6_3 node10_3}
+{rank=same; nodeY_4 node0_4 node1_4 node3_4 node4_4 node5_4 node6_4 node10_4}
 {rank=same; nodeY_5 node0_5 node1_5 node2_5 node3_5 node4_5 node5_5 node10_5}
 {rank=same; nodeY_6 node0_6 node5_6 node10_6}
 {rank=same; nodeY_7 node0_7 node5_7 node7_7 node8_7 node9_7 node10_7}
@@ -152,7 +155,10 @@ node5_5 -> node5_6 [dir=both];
 node5_6 -> node5_7 [dir=both];
 node5_7 -> node5_8 [dir=both];
 nodeX_6 -> node6_0 [dir=both];
-node6_0 -> node6_8 [dir=both];
+node6_0 -> node6_2 [dir=both];
+node6_2 -> node6_3 [dir=both];
+node6_3 -> node6_4 [dir=both];
+node6_4 -> node6_8 [dir=both];
 nodeX_7 -> node7_0 [dir=both];
 node7_0 -> node7_7 [dir=both];
 node7_7 -> node7_8 [dir=both];
@@ -191,17 +197,20 @@ node0_2 -> node1_2 [constraint=false,dir=both];
 node1_2 -> node2_2 [constraint=false,dir=both];
 node2_2 -> node3_2 [constraint=false,dir=both];
 node3_2 -> node5_2 [constraint=false,dir=both];
-node5_2 -> node10_2 [constraint=false,dir=both];
+node5_2 -> node6_2 [constraint=false,dir=both];
+node6_2 -> node10_2 [constraint=false,dir=both];
 nodeY_3 -> node0_3 [constraint=false,dir=both];
 node0_3 -> node4_3 [constraint=false,dir=both];
 node4_3 -> node5_3 [constraint=false,dir=both];
-node5_3 -> node10_3 [constraint=false,dir=both];
+node5_3 -> node6_3 [constraint=false,dir=both];
+node6_3 -> node10_3 [constraint=false,dir=both];
 nodeY_4 -> node0_4 [constraint=false,dir=both];
 node0_4 -> node1_4 [constraint=false,dir=both];
 node1_4 -> node3_4 [constraint=false,dir=both];
 node3_4 -> node4_4 [constraint=false,dir=both];
 node4_4 -> node5_4 [constraint=false,dir=both];
-node5_4 -> node10_4 [constraint=false,dir=both];
+node5_4 -> node6_4 [constraint=false,dir=both];
+node6_4 -> node10_4 [constraint=false,dir=both];
 nodeY_5 -> node0_5 [constraint=false,dir=both];
 node0_5 -> node1_5 [constraint=false,dir=both];
 node1_5 -> node2_5 [constraint=false,dir=both];

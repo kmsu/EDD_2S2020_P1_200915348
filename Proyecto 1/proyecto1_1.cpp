@@ -1496,12 +1496,12 @@ public:
         listaN = NULL;
     }
 
-    nodoAVL(string key, listaNiveles *nivel){
+    /*nodoAVL(string key, listaNiveles *nivel){
         this->key = key;
         this->fe = 0;
         left = right  = NULL;
         listaN = nivel;
-    }
+    }*/
 };
 
 class AVL{
@@ -1613,9 +1613,9 @@ public:
     //Metodo insertar inicial
     //void insertar(string d){
     void insertar(string d, listaNiveles *nivelesProyecto){
-        //nodoAVL *nuevo = new nodoAVL(d);
-        //nuevo->listaN = nivelesProyecto;
-        nodoAVL *nuevo = new nodoAVL(d, nivelesProyecto);
+        nodoAVL *nuevo = new nodoAVL(d);
+        nuevo->listaN = nivelesProyecto;
+        //nodoAVL *nuevo = new nodoAVL(d, nivelesProyecto);
         if(root == NULL){
             root = nuevo;
         }else{
@@ -1865,10 +1865,8 @@ public:
     }
 
     nodoAVL *proyecto(string nombre){
-        nodoAVL *temp = new nodoAVL(nombre);
         if(root != NULL){
-            //return proyectoRecursivo(nombre, root);
-            return proyectoRecursivo(temp, root);
+            return proyectoRecursivo(nombre, root);
         }else{
             //cout<<"Aun no se agregan proyectos"<<endl;
             return NULL;
@@ -1876,34 +1874,23 @@ public:
 
     }
 
-    //nodoAVL *proyectoRecursivo(string nombre, nodoAVL *actual){
-    nodoAVL *proyectoRecursivo(nodoAVL *retornar, nodoAVL *actual){
-        //cout<<"actual"<<actual->key<<endl;
-        //if(nombre < actual->key){
-        if(retornar->key < actual->key){
+    nodoAVL *proyectoRecursivo(string nombre, nodoAVL *actual){
+        if(nombre < actual->key){
             if(actual->left != NULL){
-                //proyectoRecursivo(nombre, actual->left);
-                proyectoRecursivo(retornar, actual->left);
-                //cout<<"actual"<<actual->key<<endl;
+                proyectoRecursivo(nombre, actual->left);
             }else{
                 //cout<<"no existe"<<endl;
                 return NULL;
-                //cout<<"actual"<<actual->key<<endl;
             }
-        //}else if(nombre > actual->key){
-        }else if(retornar->key > actual->key){
-            //cout<<"actual"<<actual->key<<endl;
+        }else if(nombre > actual->key){
             if(actual->right != NULL){
-                //cout<<"actual"<<actual->right->key<<endl;
-                //proyectoRecursivo(nombre, actual->right);
-                proyectoRecursivo(retornar, actual->right);
+                proyectoRecursivo(nombre, actual->right);
             }else{
                 //cout<<"no existe"<<endl;
                 return NULL;
             }
-        }else{//## RETORNAR EL NODO ENCONTRADO##*/
+        }else{/*## RETORNAR EL NODO ENCONTRADO##*/
             //cout<<"el nodo encontrado es: "<<actual->key<<endl;
-            //cout<<"proyecto desde el arbol"<<actual->key<<endl;
             return actual;
         }
     }
@@ -2361,10 +2348,10 @@ void leerProyecto(string archivo, AVL *principal, BST *general){
                     }
                     //nuevaListaNiveles->insertar(nivel, nuevaMatriz, nuevoArbol);
                 }//Cierra el nivel
-                cout<<nombre<<endl;
+                /*cout<<nombre<<endl;
                 nuevaListaNiveles->mostrar();
-                //nuevaListaNiveles->mostrarProyecto();
-                system("pause");
+                nuevaListaNiveles->mostrarProyecto();
+                system("pause");*/
                 principal->insertar(nombre, nuevaListaNiveles);
             }//esta llave cierra la lectura de UN proyecto
             //principal->insertar(nombre, nuevaListaNiveles);
@@ -2469,10 +2456,7 @@ void insertaravl(AVL *intentar){
 
     intentar->insertar("valor1", ln);
     intentar->insertar("valor2", ln2);
-    intentar->insertar("valor3", ln);
-    intentar->insertar("valor4", ln2);
-    intentar->insertar("valor5", ln);
-    intentar->insertar("valor6", ln2);
+
 
 }
 
@@ -2486,11 +2470,9 @@ int main(){
 
     //Mostrar lista de niveles completa
     //cout<<"lista de niveles del proyecto"<<endl;
-    //intentar->proyecto("valor4")->listaN->mostrar();
-    //cout<<"proyecto: "<<endl;
-    //cout<<intentar->proyecto("valor6")->key<<endl;
+    //intentar->proyecto("valor1")->listaN->mostrar();
     //Mostrar matriz de cierto nivel
-    //intentar->proyecto("valor4")->listaN->mostrarProyecto();
+    //intentar->proyecto("valor1")->listaN->mostrarProyecto();
     //Mostrar arbol del nivel
     //intentar->proyecto("valor2")->listaN->abbVer(5)->BSTReporter();
     //Mostrar lista de objetos por nivel
@@ -2569,8 +2551,8 @@ int main(){
                             cout<<"ingrese el nombre del proyecto: "<<endl;
                             cin>>nombreP;
                             //ver todas las matrices de un proyecto
-                            //proyectos->proyecto(nombreP)->listaN->mostrar();
-                            proyectos->proyecto(nombreP)->listaN->mostrarProyecto();
+                            proyectos->proyecto(nombreP)->listaN->mostrar();
+                            //proyectos->proyecto(nombreP)->listaN->mostrarProyecto();
                             opcVP = 2;
                         case 2:
                             //system("cls");
