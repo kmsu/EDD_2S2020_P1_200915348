@@ -1231,6 +1231,7 @@ public:
 
     //RETORNA EL NODO BUSCADO (CON SU LISTA)
     nodoBST *actualNodo(int id){
+        nodoBST *temp = new nodoBST(id, "","","");
         if(root == NULL)
         {
             cout<<"el objeto no existe"<<endl;
@@ -1238,18 +1239,22 @@ public:
         }
         else
         {
-            return recursiveActualNodo(root, id);
+            //return recursiveActualNodo(root, id);
+            return recursiveActualNodo(root, temp);
         }
     }
 
     //RETORNA EL NODO BUSCADO (CON SU LISTA)
-    nodoBST *recursiveActualNodo(nodoBST *current, int id)
+    //nodoBST *recursiveActualNodo(nodoBST *current, int id)
+    nodoBST *recursiveActualNodo(nodoBST *current, nodoBST *temp)
     {
-        if(id < current->id)
+        //if(id < current->id)
+        if(temp->id < current->id)
         {
             if(current->left != NULL)
             {
-                recursiveActualNodo(current->left, id);
+                //recursiveActualNodo(current->left, id);
+                recursiveActualNodo(current->left, temp);
             }
             else
             {
@@ -1257,11 +1262,11 @@ public:
                 return NULL;
             }
         }
-        else if(id > current->id)
+        else if(temp->id > current->id)
         {
             if(current->right != NULL)
             {
-                recursiveActualNodo(current->right, id);
+                recursiveActualNodo(current->right, temp);
             }
             else
             {
